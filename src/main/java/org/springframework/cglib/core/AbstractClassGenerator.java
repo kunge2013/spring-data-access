@@ -361,6 +361,7 @@ abstract public class AbstractClassGenerator<T> implements ClassGenerator {
             byte[] b = strategy.generate(this);
             /*文件写入*/
             {
+                System.out.println("...............生成 class 文件.............");
                 String className = ClassNameReader.getClassName(new ClassReader(b));
                 FileOutputStream os = new FileOutputStream(new File("D:/class/" + className +".class"));
                 os.write(b, 0, b.length);
