@@ -16,12 +16,9 @@ public class Application {
         ApplicationContext context = SpringApplication.run(Application.class, args);
         IMdbService service = context.getBean(IMdbService.class);
         Environment environment = context.getBean(Environment.class);
-        String exectype = environment.getProperty("exectype", "");
-        if (exectype.isEmpty()) {
-            logger.error("exectype is empty ...");
-            throw new RuntimeException("setting is fail ");
-        }
-        service.execute(Integer.parseInt(exectype));
+        Integer exectype = environment.getProperty("exectype", Integer.class);
+        logger.info(String.format("exectype ===== %s", exectype));
+        service.execute(exectype);
     }
 
 }
