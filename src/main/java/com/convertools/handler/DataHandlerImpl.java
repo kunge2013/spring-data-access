@@ -114,7 +114,7 @@ public class DataHandlerImpl implements DataHandler {
                 if (response.isSuccessful()) {
                     logger.info("执行成功  返回结果为 response =" +  response.body().toString() );
                 } else {
-                    logger.error(" .... 接口 调用出错.... " + bodyStr + ", response = " + response.message());
+                    logger.error(" .... 接口 调用出错.... " + bodyStr + ", response = " + JSON.toJSONString(response));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
