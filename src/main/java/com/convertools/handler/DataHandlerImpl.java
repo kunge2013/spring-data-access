@@ -102,8 +102,9 @@ public class DataHandlerImpl implements DataHandler {
         }
         OkHttpClient client = builder.build();
         for (OutPutData outPutData : dataSet) {
+            String bodyStr = JSON.toJSONString(ResultDTO.transToMap(outPutData));
             Request.Builder builder = new Request.Builder();
-            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), JSON.toJSONString(ResultDTO.transToMap(outPutData)));
+            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr);
             Request request = new Request.Builder()
                     .url(url)
                     .post(body)
@@ -113,11 +114,11 @@ public class DataHandlerImpl implements DataHandler {
                 if (response.isSuccessful()) {
                     logger.info("执行成功  返回结果为 response =" +  response.body().toString() );
                 } else {
-                    logger.error(" .... 接口 调用出错.... " + outPutData.toString() + ", response = " + response.message());
+                    logger.error(" .... 接口 调用出错.... " + bodyStr + ", response = " + response.message());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                logger.error("outPutData 执行出错.... " + outPutData.toString());
+                logger.error("outPutData 执行出错.... " + bodyStr);
             }
         }
 
