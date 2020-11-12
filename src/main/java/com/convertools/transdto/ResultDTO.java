@@ -48,9 +48,46 @@ public class ResultDTO {
         /* "ECorder":"88",*/
         dataMap.put("ECorder", null);
         dataMap.put("SampleNo", outPutData.getSampleno());
-        dataMap.put("do", outPutData.getBorder());
+        /*TODO 确定*/
+        dataMap.put("do", null);
+        /*确认*/
+        dataMap.put("du", null);
+        /*确认*/
+        dataMap.put("lo", null);
+        /*确认*/
+        dataMap.put("lu", null);
+
+        /*Fm*/
+        dataMap.put("Fm", null);
+
+        dataMap.put("Fp", null);
+
+        dataMap.put("FP0-2", null);
+
+        dataMap.put("A", null);
 
 
+        dataMap.put("Z", null);
+
+
+        dataMap.put("RW", null);
+
+        dataMap.put("Fel", null);
+
+        dataMap.put("ReH", null);
+
+        dataMap.put("FeH", null);
+
+        dataMap.put("PP", null);
+
+        dataMap.put("Ft", null);
+
+        dataMap.put("Rt", null);
+
+
+        dataMap.put("WorkTime", null);
+
+        dataMap.put("operators", outPutData.getOperatorname());
         return dataMap;
     }
 }

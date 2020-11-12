@@ -2,6 +2,7 @@ package com.convertools.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.convertools.entity.OutPutData;
+import com.convertools.transdto.ResultDTO;
 import okhttp3.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -102,7 +103,7 @@ public class DataHandlerImpl implements DataHandler {
         OkHttpClient client = builder.build();
         for (OutPutData outPutData : dataSet) {
             Request.Builder builder = new Request.Builder();
-            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), JSON.toJSONString(outPutData));
+            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), JSON.toJSONString(ResultDTO.transToMap(outPutData)));
             Request request = new Request.Builder()
                     .url(url)
                     .post(body)
