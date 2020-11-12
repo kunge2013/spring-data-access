@@ -1,94 +1,98 @@
 package com.convertools.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.jdbc.core.SingleColumnRowMapper;
-import org.springframework.jdbc.object.MappingSqlQuery;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.Map;
+import java.util.Set;
 
-//@NoArgsConstructor
-@Setter
-@Getter
+
 public class OutPutData {
 
-    private Integer 	id	;
-    private String 	testno	;
-    private String 	testitem	;
-    private String 	itemtable	;
-    private String 	sampleno	;
-    private String 	operatorname	;
-    private String 	curorder	;
-    private String 	testcount	;
-    private String 	maxload	;
-    private String 	maxdistort	;
-    private String 	maxstrength	;
-    private String 	yieldupload	;
-    private String 	yieldupstrength	;
-    private String 	yieldload	;
-    private String 	yieldstrength	;
-    private String 	fpload	;
-    private String 	fpstrength	;
-    private String 	ftload	;
-    private String 	ftstrength	;
-    private String 	finallength	;
-    private String 	finalrate	;
-    private String 	finalshrink	;
-    private String 	finaldia	;
-    private String 	finalwidth	;
-    private String 	finalthick	;
-    private String 	finalborder	;
-    private String 	elasticity	;
-    private String 	duration	;
-    private String 	maxspeed	;
-    private String 	temperature	;
-    private String 	humidity	;
-    private String 	testtime	;
-    private String 	finalposition	;
-    private String 	finalstate	;
-    private String 	bendresult	;
-    private String 	motherlength	;
-    private String 	motherweight	;
-    private String 	orggaugelength	;
-    private String 	extgaugelength	;
-    private String 	dia	;
-    private String 	span	;
-    private String 	length	;
-    private String 	width	;
-    private String 	thickness	;
-    private String 	border	;
-    private String 	outdia	;
-    private String 	innerdia	;
-    private String 	area	;
-    private String 	equipcode	;
-    private String 	measurerange	;
-    private String 	identifier	;
-    private String 	category	;
-    private String 	isfinished	;
-    private String 	testid	;
-    private String 	savefilename	;
-    private String 	ctrlmode	;
-    private String 	distancebeforetest	;
-    private String 	distanceaftertest	;
-    private String 	sampleinfo1	;
-    private String 	sampleinfo2	;
-    private String 	sampleinfo3	;
-    private String 	sampleinfo4	;
-    private String 	sampleinfo5	;
-    private String 	sampleinfo6	;
-    private String 	sampleinfo7	;
-    private String 	sampleinfo8	;
-    private String 	sampleinfo9	;
-    private String 	sampleinfo10	;
-    private String 	curvepicture	;
+    /*自动编号*/
+    public Integer 	id	;
+    /*试验编号/委托编号*/
+    public String 	testno	;
+    // 所属试验项目代号
+    public String 	testitem	;
+    /*试验项目表名，与三和兼容*/
+    public String 	itemtable	;
 
-    public int getId() {
+    /*操作员姓名*/
+    public String 	sampleno	;
+    /*操作员姓名*/
+    public String 	operatorname	;
+    public Integer 	curorder	;
+    public Integer 	testcount	;
+    public double 	maxload	;
+    public double 	maxdistort	;
+    public double 	maxstrength	;
+    public double 	yieldupload	;
+    public double 	yieldupstrength	;
+    public double 	yieldload	;
+    public double 	yieldstrength	;
+    public double 	fpload	;
+    public double 	fpstrength	;
+    public double 	ftload	;
+    public double 	ftstrength	;
+    public double 	finallength	;
+    public double 	finalrate	;
+    public double 	finalshrink	;
+    public double 	finaldia	;
+    public double 	finalwidth	;
+    public double 	finalthick	;
+    public double 	finalborder	;
+    public double 	elasticity	;
+    public double 	duration	;
+    public double 	maxspeed	;
+
+    public double 	temperature	;
+    public double 	humidity	;
+
+    public long 	testtime	;
+    public String 	finalposition	;
+    public String 	finalstate	;
+    public String 	bendresult	;
+    public double 	motherlength	;
+    public double 	motherweight	;
+    public double 	orggaugelength	;
+    public Integer 	extgaugelength	;
+    public double 	dia	;
+    public double 	span	;
+    public double 	length	;
+    public double 	width	;
+    public double 	thickness	;
+    public double 	border	;
+    public double 	outdia	;
+    public double 	innerdia	;
+    public double 	area	;
+    public String 	equipcode	;
+    public Integer 	measurerange	;
+    public String 	identifier	;
+    public String 	category	;
+    public Integer 	isfinished	;
+    public Integer 	testid	;
+    public String 	savefilename	;
+    public String 	ctrlmode	;
+    public String 	distancebeforetest	;
+    public String 	distanceaftertest	;
+    public String 	sampleinfo1	;
+    public String 	sampleinfo2	;
+    public String 	sampleinfo3	;
+    public String 	sampleinfo4	;
+    public String 	sampleinfo5	;
+    public String 	sampleinfo6	;
+    public String 	sampleinfo7	;
+    public String 	sampleinfo8	;
+    public String 	sampleinfo9	;
+    public String 	sampleinfo10	;
+    public byte[] 	curvepicture	;
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -132,211 +136,211 @@ public class OutPutData {
         this.operatorname = operatorname;
     }
 
-    public String getCurorder() {
+    public Integer getCurorder() {
         return curorder;
     }
 
-    public void setCurorder(String curorder) {
+    public void setCurorder(Integer curorder) {
         this.curorder = curorder;
     }
 
-    public String getTestcount() {
+    public Integer getTestcount() {
         return testcount;
     }
 
-    public void setTestcount(String testcount) {
+    public void setTestcount(Integer testcount) {
         this.testcount = testcount;
     }
 
-    public String getMaxload() {
+    public double getMaxload() {
         return maxload;
     }
 
-    public void setMaxload(String maxload) {
+    public void setMaxload(double maxload) {
         this.maxload = maxload;
     }
 
-    public String getMaxdistort() {
+    public double getMaxdistort() {
         return maxdistort;
     }
 
-    public void setMaxdistort(String maxdistort) {
+    public void setMaxdistort(double maxdistort) {
         this.maxdistort = maxdistort;
     }
 
-    public String getMaxstrength() {
+    public double getMaxstrength() {
         return maxstrength;
     }
 
-    public void setMaxstrength(String maxstrength) {
+    public void setMaxstrength(double maxstrength) {
         this.maxstrength = maxstrength;
     }
 
-    public String getYieldupload() {
+    public double getYieldupload() {
         return yieldupload;
     }
 
-    public void setYieldupload(String yieldupload) {
+    public void setYieldupload(double yieldupload) {
         this.yieldupload = yieldupload;
     }
 
-    public String getYieldupstrength() {
+    public double getYieldupstrength() {
         return yieldupstrength;
     }
 
-    public void setYieldupstrength(String yieldupstrength) {
+    public void setYieldupstrength(double yieldupstrength) {
         this.yieldupstrength = yieldupstrength;
     }
 
-    public String getYieldload() {
+    public double getYieldload() {
         return yieldload;
     }
 
-    public void setYieldload(String yieldload) {
+    public void setYieldload(double yieldload) {
         this.yieldload = yieldload;
     }
 
-    public String getYieldstrength() {
+    public double getYieldstrength() {
         return yieldstrength;
     }
 
-    public void setYieldstrength(String yieldstrength) {
+    public void setYieldstrength(double yieldstrength) {
         this.yieldstrength = yieldstrength;
     }
 
-    public String getFpload() {
+    public double getFpload() {
         return fpload;
     }
 
-    public void setFpload(String fpload) {
+    public void setFpload(double fpload) {
         this.fpload = fpload;
     }
 
-    public String getFpstrength() {
+    public double getFpstrength() {
         return fpstrength;
     }
 
-    public void setFpstrength(String fpstrength) {
+    public void setFpstrength(double fpstrength) {
         this.fpstrength = fpstrength;
     }
 
-    public String getFtload() {
+    public double getFtload() {
         return ftload;
     }
 
-    public void setFtload(String ftload) {
+    public void setFtload(double ftload) {
         this.ftload = ftload;
     }
 
-    public String getFtstrength() {
+    public double getFtstrength() {
         return ftstrength;
     }
 
-    public void setFtstrength(String ftstrength) {
+    public void setFtstrength(double ftstrength) {
         this.ftstrength = ftstrength;
     }
 
-    public String getFinallength() {
+    public double getFinallength() {
         return finallength;
     }
 
-    public void setFinallength(String finallength) {
+    public void setFinallength(double finallength) {
         this.finallength = finallength;
     }
 
-    public String getFinalrate() {
+    public double getFinalrate() {
         return finalrate;
     }
 
-    public void setFinalrate(String finalrate) {
+    public void setFinalrate(double finalrate) {
         this.finalrate = finalrate;
     }
 
-    public String getFinalshrink() {
+    public double getFinalshrink() {
         return finalshrink;
     }
 
-    public void setFinalshrink(String finalshrink) {
+    public void setFinalshrink(double finalshrink) {
         this.finalshrink = finalshrink;
     }
 
-    public String getFinaldia() {
+    public double getFinaldia() {
         return finaldia;
     }
 
-    public void setFinaldia(String finaldia) {
+    public void setFinaldia(double finaldia) {
         this.finaldia = finaldia;
     }
 
-    public String getFinalwidth() {
+    public double getFinalwidth() {
         return finalwidth;
     }
 
-    public void setFinalwidth(String finalwidth) {
+    public void setFinalwidth(double finalwidth) {
         this.finalwidth = finalwidth;
     }
 
-    public String getFinalthick() {
+    public double getFinalthick() {
         return finalthick;
     }
 
-    public void setFinalthick(String finalthick) {
+    public void setFinalthick(double finalthick) {
         this.finalthick = finalthick;
     }
 
-    public String getFinalborder() {
+    public double getFinalborder() {
         return finalborder;
     }
 
-    public void setFinalborder(String finalborder) {
+    public void setFinalborder(double finalborder) {
         this.finalborder = finalborder;
     }
 
-    public String getElasticity() {
+    public double getElasticity() {
         return elasticity;
     }
 
-    public void setElasticity(String elasticity) {
+    public void setElasticity(double elasticity) {
         this.elasticity = elasticity;
     }
 
-    public String getDuration() {
+    public double getDuration() {
         return duration;
     }
 
-    public void setDuration(String duration) {
+    public void setDuration(double duration) {
         this.duration = duration;
     }
 
-    public String getMaxspeed() {
+    public double getMaxspeed() {
         return maxspeed;
     }
 
-    public void setMaxspeed(String maxspeed) {
+    public void setMaxspeed(double maxspeed) {
         this.maxspeed = maxspeed;
     }
 
-    public String getTemperature() {
+    public double getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(String temperature) {
+    public void setTemperature(double temperature) {
         this.temperature = temperature;
     }
 
-    public String getHumidity() {
+    public double getHumidity() {
         return humidity;
     }
 
-    public void setHumidity(String humidity) {
+    public void setHumidity(double humidity) {
         this.humidity = humidity;
     }
 
-    public String getTesttime() {
+    public long getTesttime() {
         return testtime;
     }
 
-    public void setTesttime(String testtime) {
+    public void setTesttime(long testtime) {
         this.testtime = testtime;
     }
 
@@ -364,107 +368,107 @@ public class OutPutData {
         this.bendresult = bendresult;
     }
 
-    public String getMotherlength() {
+    public double getMotherlength() {
         return motherlength;
     }
 
-    public void setMotherlength(String motherlength) {
+    public void setMotherlength(double motherlength) {
         this.motherlength = motherlength;
     }
 
-    public String getMotherweight() {
+    public double getMotherweight() {
         return motherweight;
     }
 
-    public void setMotherweight(String motherweight) {
+    public void setMotherweight(double motherweight) {
         this.motherweight = motherweight;
     }
 
-    public String getOrggaugelength() {
+    public double getOrggaugelength() {
         return orggaugelength;
     }
 
-    public void setOrggaugelength(String orggaugelength) {
+    public void setOrggaugelength(double orggaugelength) {
         this.orggaugelength = orggaugelength;
     }
 
-    public String getExtgaugelength() {
+    public Integer getExtgaugelength() {
         return extgaugelength;
     }
 
-    public void setExtgaugelength(String extgaugelength) {
+    public void setExtgaugelength(Integer extgaugelength) {
         this.extgaugelength = extgaugelength;
     }
 
-    public String getDia() {
+    public double getDia() {
         return dia;
     }
 
-    public void setDia(String dia) {
+    public void setDia(double dia) {
         this.dia = dia;
     }
 
-    public String getSpan() {
+    public double getSpan() {
         return span;
     }
 
-    public void setSpan(String span) {
+    public void setSpan(double span) {
         this.span = span;
     }
 
-    public String getLength() {
+    public double getLength() {
         return length;
     }
 
-    public void setLength(String length) {
+    public void setLength(double length) {
         this.length = length;
     }
 
-    public String getWidth() {
+    public double getWidth() {
         return width;
     }
 
-    public void setWidth(String width) {
+    public void setWidth(double width) {
         this.width = width;
     }
 
-    public String getThickness() {
+    public double getThickness() {
         return thickness;
     }
 
-    public void setThickness(String thickness) {
+    public void setThickness(double thickness) {
         this.thickness = thickness;
     }
 
-    public String getBorder() {
+    public double getBorder() {
         return border;
     }
 
-    public void setBorder(String border) {
+    public void setBorder(double border) {
         this.border = border;
     }
 
-    public String getOutdia() {
+    public double getOutdia() {
         return outdia;
     }
 
-    public void setOutdia(String outdia) {
+    public void setOutdia(double outdia) {
         this.outdia = outdia;
     }
 
-    public String getInnerdia() {
+    public double getInnerdia() {
         return innerdia;
     }
 
-    public void setInnerdia(String innerdia) {
+    public void setInnerdia(double innerdia) {
         this.innerdia = innerdia;
     }
 
-    public String getArea() {
+    public double getArea() {
         return area;
     }
 
-    public void setArea(String area) {
+    public void setArea(double area) {
         this.area = area;
     }
 
@@ -476,11 +480,11 @@ public class OutPutData {
         this.equipcode = equipcode;
     }
 
-    public String getMeasurerange() {
+    public Integer getMeasurerange() {
         return measurerange;
     }
 
-    public void setMeasurerange(String measurerange) {
+    public void setMeasurerange(Integer measurerange) {
         this.measurerange = measurerange;
     }
 
@@ -500,19 +504,19 @@ public class OutPutData {
         this.category = category;
     }
 
-    public String getIsfinished() {
+    public Integer getIsfinished() {
         return isfinished;
     }
 
-    public void setIsfinished(String isfinished) {
+    public void setIsfinished(Integer isfinished) {
         this.isfinished = isfinished;
     }
 
-    public String getTestid() {
+    public Integer getTestid() {
         return testid;
     }
 
-    public void setTestid(String testid) {
+    public void setTestid(Integer testid) {
         this.testid = testid;
     }
 
@@ -628,21 +632,129 @@ public class OutPutData {
         this.sampleinfo10 = sampleinfo10;
     }
 
-    public String getCurvepicture() {
+    public byte[] getCurvepicture() {
         return curvepicture;
     }
 
-    public void setCurvepicture(String curvepicture) {
+    public void setCurvepicture(byte[] curvepicture) {
         this.curvepicture = curvepicture;
     }
 
-    public static final class QueryMapper extends MappingSqlQuery<OutPutData> {
-
-        private final SingleColumnRowMapper<OutPutData> rowMapper = new SingleColumnRowMapper<>();
-
-        @Override
-        protected OutPutData mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return rowMapper.mapRow(rs, rowNum);
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("OutPutData{");
+        sb.append("id=").append(id);
+        sb.append(", testno='").append(testno).append('\'');
+        sb.append(", testitem='").append(testitem).append('\'');
+        sb.append(", itemtable='").append(itemtable).append('\'');
+        sb.append(", sampleno='").append(sampleno).append('\'');
+        sb.append(", operatorname='").append(operatorname).append('\'');
+        sb.append(", curorder=").append(curorder);
+        sb.append(", testcount=").append(testcount);
+        sb.append(", maxload=").append(maxload);
+        sb.append(", maxdistort=").append(maxdistort);
+        sb.append(", maxstrength=").append(maxstrength);
+        sb.append(", yieldupload=").append(yieldupload);
+        sb.append(", yieldupstrength=").append(yieldupstrength);
+        sb.append(", yieldload=").append(yieldload);
+        sb.append(", yieldstrength=").append(yieldstrength);
+        sb.append(", fpload=").append(fpload);
+        sb.append(", fpstrength=").append(fpstrength);
+        sb.append(", ftload=").append(ftload);
+        sb.append(", ftstrength=").append(ftstrength);
+        sb.append(", finallength=").append(finallength);
+        sb.append(", finalrate=").append(finalrate);
+        sb.append(", finalshrink=").append(finalshrink);
+        sb.append(", finaldia=").append(finaldia);
+        sb.append(", finalwidth=").append(finalwidth);
+        sb.append(", finalthick=").append(finalthick);
+        sb.append(", finalborder=").append(finalborder);
+        sb.append(", elasticity=").append(elasticity);
+        sb.append(", duration=").append(duration);
+        sb.append(", maxspeed=").append(maxspeed);
+        sb.append(", temperature=").append(temperature);
+        sb.append(", humidity=").append(humidity);
+        sb.append(", testtime=").append(testtime);
+        sb.append(", finalposition='").append(finalposition).append('\'');
+        sb.append(", finalstate='").append(finalstate).append('\'');
+        sb.append(", bendresult='").append(bendresult).append('\'');
+        sb.append(", motherlength=").append(motherlength);
+        sb.append(", motherweight=").append(motherweight);
+        sb.append(", orggaugelength=").append(orggaugelength);
+        sb.append(", extgaugelength=").append(extgaugelength);
+        sb.append(", dia=").append(dia);
+        sb.append(", span=").append(span);
+        sb.append(", length=").append(length);
+        sb.append(", width=").append(width);
+        sb.append(", thickness=").append(thickness);
+        sb.append(", border=").append(border);
+        sb.append(", outdia=").append(outdia);
+        sb.append(", innerdia=").append(innerdia);
+        sb.append(", area=").append(area);
+        sb.append(", equipcode='").append(equipcode).append('\'');
+        sb.append(", measurerange=").append(measurerange);
+        sb.append(", identifier='").append(identifier).append('\'');
+        sb.append(", category='").append(category).append('\'');
+        sb.append(", isfinished=").append(isfinished);
+        sb.append(", testid=").append(testid);
+        sb.append(", savefilename='").append(savefilename).append('\'');
+        sb.append(", ctrlmode='").append(ctrlmode).append('\'');
+        sb.append(", distancebeforetest='").append(distancebeforetest).append('\'');
+        sb.append(", distanceaftertest='").append(distanceaftertest).append('\'');
+        sb.append(", sampleinfo1='").append(sampleinfo1).append('\'');
+        sb.append(", sampleinfo2='").append(sampleinfo2).append('\'');
+        sb.append(", sampleinfo3='").append(sampleinfo3).append('\'');
+        sb.append(", sampleinfo4='").append(sampleinfo4).append('\'');
+        sb.append(", sampleinfo5='").append(sampleinfo5).append('\'');
+        sb.append(", sampleinfo6='").append(sampleinfo6).append('\'');
+        sb.append(", sampleinfo7='").append(sampleinfo7).append('\'');
+        sb.append(", sampleinfo8='").append(sampleinfo8).append('\'');
+        sb.append(", sampleinfo9='").append(sampleinfo9).append('\'');
+        sb.append(", sampleinfo10='").append(sampleinfo10).append('\'');
+        sb.append(", curvepicture=");
+        if (curvepicture == null) sb.append("null");
+        else {
+            sb.append('[');
+            for (int i = 0; i < curvepicture.length; ++i)
+                sb.append(i == 0 ? "" : ", ").append(curvepicture[i]);
+            sb.append(']');
         }
+        sb.append('}');
+        return sb.toString();
+    }
+
+    public static OutPutData createOutPutData(Map<String, Object> dataMap) {
+        OutPutData outPutData = new OutPutData();
+        Class<? extends OutPutData> aClass = outPutData.getClass();
+        Set<String> fields = dataMap.keySet();
+        if (!fields.isEmpty()) {
+            for (String fieldName : fields) {
+                Field field = null;
+                try {
+                    field = aClass.getField(fieldName.toLowerCase());
+                    if (field != null) {
+                        field.setAccessible(true);
+                        Object o = dataMap.get(fieldName);
+                        if (o instanceof Integer) {
+                            field.set(outPutData,  o);
+                        } else if (o instanceof String) {
+                            field.set(outPutData,   o);
+                        } else if (o instanceof Double) {
+                            field.set(outPutData,   o);
+                        }  else if (o instanceof BigDecimal) {
+                            BigDecimal d = (BigDecimal) o;
+                            field.set(outPutData,   d.doubleValue());
+                        }
+                       // field.set(outPutData, dataMap.get(fieldName));
+                    }
+                } catch (NoSuchFieldException  e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+        return outPutData;
     }
 }
