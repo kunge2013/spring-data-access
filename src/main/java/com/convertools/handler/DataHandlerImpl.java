@@ -180,7 +180,6 @@ public class DataHandlerImpl implements DataHandler {
             if (!paramFactValues.isEmpty())  {
                 for (ParamFactValue paramFactValue : paramFactValues) {
                     String name = paramFactValue.getName().toLowerCase();
-                    System.out.println("name = " + name);
                     /*动态赋值*/
                     if (fieldMapper.containsKey(name.toLowerCase())) {
                         map.put(fieldMapper.get(name.toLowerCase()), paramFactValue.getTheValue());
