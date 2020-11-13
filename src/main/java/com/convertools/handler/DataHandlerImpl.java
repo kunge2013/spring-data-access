@@ -42,7 +42,7 @@ public class DataHandlerImpl implements DataHandler {
     @Value("${upload.host}")
     private String host;
 
-    private String uploadPath = "/api/v1/code";
+    private String uploadPath = "api/v1/code";
 
     @Override
     public void handler() {
@@ -112,7 +112,7 @@ public class DataHandlerImpl implements DataHandler {
             try {
                 Response response = client.newCall(request).execute();
                 if (response.isSuccessful()) {
-                    logger.info("执行成功  返回结果为 response =" +  response.body().toString() );
+                    logger.info("执行成功  返回结果为 response =" +  JSON.toJSONString(response) +", messge =" + response.message());
                 } else {
                     logger.error(" .... 接口 调用出错.... " + bodyStr + ", response = " + JSON.toJSONString(response));
                 }
