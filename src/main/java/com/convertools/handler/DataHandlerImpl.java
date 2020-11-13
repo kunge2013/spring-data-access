@@ -13,12 +13,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +51,8 @@ public class DataHandlerImpl implements DataHandler {
     @Value("${upload.host}")
     private String host;
 
+    @Resource(name = "fieldMapper")
+    private HashMap<String, String> fieldMapper;
 
     private String uploadPath = "api/v1/code";
 
@@ -121,8 +125,8 @@ public class DataHandlerImpl implements DataHandler {
         }
         OkHttpClient client = builder.build();
         for (OutPutData outPutData : dataSet) {
-            parseData(outPutData);
-            String bodyStr = JSON.toJSONString(ResultDTO.transToMap(outPutData));
+            Map<String, Object> map = parseData(outPutData);
+            String bodyStr = JSON.toJSONString(map);
             Request.Builder builder = new Request.Builder();
             RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr);
             Request request = new Request.Builder()
@@ -167,6 +171,16 @@ public class DataHandlerImpl implements DataHandler {
                 paramFactValues.add(paramFactValue);
             }
             System.out.println("paramFactValues = " + paramFactValues);
+            if (!paramFactValues.isEmpty())  {
+                for (ParamFactValue paramFactValue : paramFactValues) {
+                    String name = paramFactValue.getName();
+                    /*动态赋值*/
+                    if (fieldMapper.containsKey(name)) {
+                        map.put(fieldMapper.get(name), paramFactValue.getTheValue());
+                    }
+                }
+            }
+
         }catch (Exception e) {
             e.printStackTrace();
         } finally {
