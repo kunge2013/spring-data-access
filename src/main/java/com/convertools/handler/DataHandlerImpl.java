@@ -110,6 +110,8 @@ public class DataHandlerImpl implements DataHandler {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+
         }
     }
 
@@ -146,6 +148,7 @@ public class DataHandlerImpl implements DataHandler {
                     logger.info("执行成功  返回结果为 response =" +  JSON.toJSONString(response) +", messge =" + response.message());
                 } else {
                     logger.error(" .... 接口 调用出错.... " + bodyStr + ", response = " + JSON.toJSONString(response));
+                    throw  new RuntimeException("call inf fail ");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
