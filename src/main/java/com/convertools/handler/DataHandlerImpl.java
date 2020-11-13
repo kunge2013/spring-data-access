@@ -179,10 +179,11 @@ public class DataHandlerImpl implements DataHandler {
             System.out.println("paramFactValues = " + paramFactValues);
             if (!paramFactValues.isEmpty())  {
                 for (ParamFactValue paramFactValue : paramFactValues) {
-                    String name = paramFactValue.getName();
+                    String name = paramFactValue.getName().toLowerCase();
+                    System.out.println("name = " + name);
                     /*动态赋值*/
-                    if (fieldMapper.containsKey(name)) {
-                        map.put(fieldMapper.get(name), paramFactValue.getTheValue());
+                    if (fieldMapper.containsKey(name.toLowerCase())) {
+                        map.put(fieldMapper.get(name.toLowerCase()), paramFactValue.getTheValue());
                     }
                 }
             }
