@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public abstract class BaseEntity {
 
-    protected Map<String, Object> convertToMap() {
+    public Map<String, Object> convertToMap() {
         Map<String, Object> result = new HashMap<>();
         Field[] fields = this.getClass().getFields();
         if (fields != null) {

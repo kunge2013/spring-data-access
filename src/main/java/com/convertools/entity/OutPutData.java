@@ -14,7 +14,8 @@ public class OutPutData extends BaseEntity {
     /*自动编号*/
 
     public Integer 	id	;
-    /*试验编号/委托编号*/
+    /*委托编号*/
+    @ConvertField(name = "Ecoder", desc = "委托单号")
     public String 	testno	;
     // 所属试验项目代号
     public String 	testitem	;
@@ -23,17 +24,23 @@ public class OutPutData extends BaseEntity {
 
 
     /*操作员姓名*/
-    @ConvertField(name = "SampleNo")
+    @ConvertField(name = "SampleNo", desc = "试样编号")
     public String 	sampleno	;
     /*操作员姓名*/
-    @ConvertField(name = "operators")
+    @ConvertField(name = "operators", desc = "操作员")
     public String 	operatorname	;
     public Integer 	curorder	;
     public Integer 	testcount	;
+
+    @ConvertField(name = "Fm", desc = "最大力（kN）")
     public double 	maxload	;
+
     public double 	maxdistort	;
     public double 	maxstrength	;
+
+    @ConvertField(name = "FeH", desc = "上屈服力（kN）")
     public double 	yieldupload	;
+
     public double 	yieldupstrength	;
     public double 	yieldload	;
     public double 	yieldstrength	;
@@ -41,6 +48,8 @@ public class OutPutData extends BaseEntity {
     public double 	fpstrength	;
     public double 	ftload	;
     public double 	ftstrength	;
+
+    @ConvertField(name = "lu", desc = "断后标距（mm）")
     public double 	finallength	;
     public double 	finalrate	;
     public double 	finalshrink	;
@@ -55,14 +64,17 @@ public class OutPutData extends BaseEntity {
     public double 	temperature	;
     public double 	humidity	;
 
-    @ConvertField(name = "WorkTime")
+    @ConvertField(name = "WorkTime", desc = "测试时间")
     public long 	testtime	;
     public String 	finalposition	;
     public String 	finalstate	;
     public String 	bendresult	;
     public double 	motherlength	;
     public double 	motherweight	;
+
+    @ConvertField(name = "lo", desc = "原始标距 (Lo)")
     public double 	orggaugelength	;
+
     public Integer 	extgaugelength	;
     public double 	dia	;
     public double 	span	;

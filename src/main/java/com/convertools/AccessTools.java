@@ -47,9 +47,19 @@ public class AccessTools {
         return this.connection;
     }
 
+    public Connection getConnection(String url, String user, String pwd) {
+        try {
+            //获取Access数据库连接(Connection)
+            this.connection = DriverManager.getConnection(url, user, pwd);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return this.connection;
+    }
+
     public static void main(String[] args) throws Exception {
         AccessTools access=new AccessTools();
-        Connection connection = access.getAccessConnection("D:\\Program Files (x86)\\PowerTestV3.5-SHT\\data\\1--jk-ye2011(12)00012-11.mdb", "", "");
+        Connection connection = access.getAccessConnection("D:\\Program Files (x86)\\PowerTestV3.5-SHT\\data\\1--jk-ye2011(12)00012-7.mdb", "", "");
         access.select(connection);
     }
     /**
@@ -61,14 +71,9 @@ public class AccessTools {
      */
     public void select(Connection connection) throws Exception {
         Statement statement = connection.createStatement();
-        ResultSet result = statement.executeQuery("select * from student");
+        ResultSet result = statement.executeQuery("select * from ParamFactValue");
         while (result.next()) {
-            System.out.print(result.getString("id") + "\t");
-            System.out.print(result.getString("name") + "\t");
-            System.out.print(result.getString("address") + "\t");
-            System.out.print(result.getString("age") + "\t");
-            System.out.print(result.getString("birthday") + "\t");
-            System.out.println();
+            System.out.print(result.getString(4) + "\t");
         }
         statement.close();
         connection.close();

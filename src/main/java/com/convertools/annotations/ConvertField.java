@@ -15,5 +15,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({METHOD, FIELD})
 @Retention(RUNTIME)
 public @interface ConvertField {
+
      String name();
+     /*描述*/
+     String desc() default "";
+
 }

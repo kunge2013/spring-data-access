@@ -1,7 +1,9 @@
 package com.convertools.handler;
 
 import com.alibaba.fastjson.JSON;
+import com.convertools.AccessTools;
 import com.convertools.entity.OutPutData;
+import com.convertools.entity.ParamFactValue;
 import com.convertools.transdto.ResultDTO;
 import okhttp3.*;
 import org.apache.commons.logging.Log;
@@ -12,6 +14,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,13 +42,26 @@ public class DataHandlerImpl implements DataHandler {
     @Value("${temp.file.path}")
     private String filePath;
 
+
     @Value("${uploadinitall}")
     private boolean uploadinitall = false;
 
     @Value("${upload.host}")
     private String host;
 
+
     private String uploadPath = "api/v1/code";
+
+
+
+    @Value("${data.path.dir}")
+    private String dataPathDir;
+
+    @Value("${data.path.user}")
+    private String user;
+
+    @Value("${data.path.password}")
+    private String password;
 
     @Override
     public void handler() {
@@ -102,6 +121,7 @@ public class DataHandlerImpl implements DataHandler {
         }
         OkHttpClient client = builder.build();
         for (OutPutData outPutData : dataSet) {
+            parseData(outPutData);
             String bodyStr = JSON.toJSONString(ResultDTO.transToMap(outPutData));
             Request.Builder builder = new Request.Builder();
             RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr);
@@ -122,5 +142,49 @@ public class DataHandlerImpl implements DataHandler {
             }
         }
 
+    }
+
+    private Map<String, Object> parseData(OutPutData outPutData) {
+        Map<String, Object> map = outPutData.convertToMap();
+        String savefilename = outPutData.getSavefilename();
+        String filePath = dataPathDir +  savefilename;
+        AccessTools tools = new AccessTools();
+        Connection connection = tools.getConnection(filePath, user, password);
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+            ResultSet result = statement.executeQuery("select TestNo,littleNo,Name,TheValue,Unit,UserOrResultParam from ParamFactValue where TestNo =" + outPutData.getTestid());
+            List<ParamFactValue> paramFactValues = new ArrayList<>();
+            while (result.next()) {
+                ParamFactValue paramFactValue = new ParamFactValue();
+                paramFactValue.setTestNo(result.getInt("TestNo"));
+                paramFactValue.setLittleNo(result.getInt("littleNo"));
+                paramFactValue.setName(result.getString("Name"));
+                paramFactValue.setTheValue(result.getString("TheValue"));
+                paramFactValue.setUnit(result.getString("Unit"));
+                paramFactValue.setUserOrResultParam(result.getInt("UserOrResultParam"));
+                /*存入集合*/
+                paramFactValues.add(paramFactValue);
+            }
+            System.out.println("paramFactValues = " + paramFactValues);
+        }catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+        }
+        return map;
     }
 }
