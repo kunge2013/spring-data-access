@@ -13,7 +13,7 @@ import java.util.Map;
 public class ResultDTO {
 
 
-
+//
 //    {   "code":"FM06008",
 //            "ECorder":"88",
 //            "SampleNo":"77",
