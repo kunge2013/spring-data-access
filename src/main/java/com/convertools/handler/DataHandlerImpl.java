@@ -2,6 +2,7 @@ package com.convertools.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.convertools.AccessTools;
+import com.convertools.entity.Certificate;
 import com.convertools.entity.OutPutData;
 import com.convertools.entity.ParamFactValue;
 import com.convertools.transdto.ResultDTO;
@@ -71,8 +72,15 @@ public class DataHandlerImpl implements DataHandler {
     @Value("${device.no}")
     private String code;
 
+    @Autowired
+    private Certificate certificate;
     @Override
     public void handler() {
+        /*过期校验*/
+        if (certificate.isInvalid()) {
+            logger.info("certificate key 已过期...");
+            return;
+        }
         String lastContent = "0";
         try {
             File tempFile = new File(filePath);
