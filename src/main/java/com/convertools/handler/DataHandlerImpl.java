@@ -67,6 +67,10 @@ public class DataHandlerImpl implements DataHandler {
     @Value("${data.path.password}")
     private String password;
 
+    /*设备编号*/
+    @Value("device.no")
+    private String code;
+
     @Override
     public void handler() {
         String lastContent = "0";
@@ -126,6 +130,7 @@ public class DataHandlerImpl implements DataHandler {
         OkHttpClient client = builder.build();
         for (OutPutData outPutData : dataSet) {
             Map<String, Object> map = parseData(outPutData);
+            map.put("code", code);//设备编号
             String bodyStr = JSON.toJSONString(map);
             Request.Builder builder = new Request.Builder();
             RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr);
