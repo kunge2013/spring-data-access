@@ -21,9 +21,12 @@ public class OutPutData extends BaseEntity {
     /*试验项目表名，与三和兼容*/
     public String 	itemtable	;
 
+
     /*操作员姓名*/
+    @ConvertField(name = "SampleNo")
     public String 	sampleno	;
     /*操作员姓名*/
+    @ConvertField(name = "operators")
     public String 	operatorname	;
     public Integer 	curorder	;
     public Integer 	testcount	;
@@ -52,6 +55,7 @@ public class OutPutData extends BaseEntity {
     public double 	temperature	;
     public double 	humidity	;
 
+    @ConvertField(name = "WorkTime")
     public long 	testtime	;
     public String 	finalposition	;
     public String 	finalstate	;
