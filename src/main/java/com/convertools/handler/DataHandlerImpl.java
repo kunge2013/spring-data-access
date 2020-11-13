@@ -54,6 +54,7 @@ public class DataHandlerImpl implements DataHandler {
     @Resource(name = "fieldMapper")
     private HashMap<String, String> fieldMapper;
 
+    @Value("${upload.uploadPath}")
     private String uploadPath = "api/v1/code";
 
 
