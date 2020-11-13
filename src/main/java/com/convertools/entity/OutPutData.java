@@ -53,7 +53,10 @@ public class OutPutData extends BaseEntity {
     public double 	finallength	;
     public double 	finalrate	;
     public double 	finalshrink	;
+
+    @ConvertField(name="du", desc = "断后直径")
     public double 	finaldia	;
+
     public double 	finalwidth	;
     public double 	finalthick	;
     public double 	finalborder	;
@@ -76,7 +79,10 @@ public class OutPutData extends BaseEntity {
     public double 	orggaugelength	;
 
     public Integer 	extgaugelength	;
+
+    @ConvertField(name = "do", desc = "试样直径")
     public double 	dia	;
+
     public double 	span	;
     public double 	length	;
     public double 	width	;
