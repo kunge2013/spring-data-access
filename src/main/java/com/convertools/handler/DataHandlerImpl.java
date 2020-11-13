@@ -45,7 +45,7 @@ public class DataHandlerImpl implements DataHandler {
     private String filePath;
 
 
-    @Value("${uploadinitall}")
+    @Value("${upload.initall}")
     private boolean uploadinitall = false;
 
     @Value("${upload.host}")
@@ -56,7 +56,6 @@ public class DataHandlerImpl implements DataHandler {
 
     @Value("${upload.uploadPath}")
     private String uploadPath = "api/v1/code";
-
 
 
     @Value("${data.path.dir}")
@@ -78,6 +77,10 @@ public class DataHandlerImpl implements DataHandler {
         try {
             File tempFile = new File(filePath);
             if (!tempFile.exists()) {
+                File parentFile = tempFile.getParentFile();
+                if (!parentFile.exists()) {
+                    parentFile.mkdir();
+                }
                 tempFile.createNewFile();
             }
             BufferedReader reader = new BufferedReader(new FileReader(tempFile));
@@ -109,10 +112,11 @@ public class DataHandlerImpl implements DataHandler {
             os.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            logger.error("文件没找到" ,e );
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("io 异常 " ,e );
         } catch (Exception e) {
-
+            logger.error("异常 了 =====" ,e );
         }
     }
 
@@ -144,15 +148,13 @@ public class DataHandlerImpl implements DataHandler {
                     .build();
             try {
                 Response response = client.newCall(request).execute();
-                if (response.isSuccessful()
-                            && "Ok".equalsIgnoreCase(response.message())) {
+                if (response.isSuccessful() && "Ok".equalsIgnoreCase(response.message())) {
                     logger.info("执行成功  返回结果为 response =" +  JSON.toJSONString(response) +", messge =" + response.message());
                 } else {
                     logger.error(" .... 接口 调用出错.... " + bodyStr + ", response = " + JSON.toJSONString(response));
                     throw  new RuntimeException("call inf fail ");
                 }
             } catch (IOException e) {
-                e.printStackTrace();
                 logger.error("outPutData 执行出错.... " + bodyStr);
             }
         }
@@ -164,9 +166,10 @@ public class DataHandlerImpl implements DataHandler {
         String savefilename = outPutData.getSavefilename();
         String filePath = dataPathDir +  savefilename;
         AccessTools tools = new AccessTools();
-        Connection connection = tools.getConnection(filePath, user, password);
+        Connection connection = null;
         Statement statement = null;
         try {
+            connection = tools.getConnection(filePath, user, password);
             statement = connection.createStatement();
             ResultSet result = statement.executeQuery("select TestNo,littleNo,Name,TheValue,Unit,UserOrResultParam from ParamFactValue where TestNo =" + outPutData.getTestid());
             List<ParamFactValue> paramFactValues = new ArrayList<>();
@@ -181,7 +184,6 @@ public class DataHandlerImpl implements DataHandler {
                 /*存入集合*/
                 paramFactValues.add(paramFactValue);
             }
-            System.out.println("paramFactValues = " + paramFactValues);
             if (!paramFactValues.isEmpty())  {
                 for (ParamFactValue paramFactValue : paramFactValues) {
                     String name = paramFactValue.getName().toLowerCase();
@@ -192,8 +194,8 @@ public class DataHandlerImpl implements DataHandler {
                 }
             }
 
-        }catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            logger.error("转换数据失败!!!! outPutData id = " + outPutData.getId() + ", outPutData = " + JSON.toJSONString(outPutData), e);
         } finally {
             if (statement != null) {
                 try {
