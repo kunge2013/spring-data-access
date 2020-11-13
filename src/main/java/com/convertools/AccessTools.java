@@ -1,5 +1,7 @@
 package com.convertools;
 
+import org.springframework.boot.loader.JarLauncher;
+
 import java.sql.*;
 
 /**
@@ -57,11 +59,12 @@ public class AccessTools {
         return this.connection;
     }
 
-    public static void main(String[] args) throws Exception {
-        AccessTools access=new AccessTools();
-        Connection connection = access.getAccessConnection("D:\\Program Files (x86)\\PowerTestV3.5-SHT\\data\\1--jk-ye2011(12)00012-7.mdb", "", "");
-        access.select(connection);
-    }
+       JarLauncher jarLauncher;
+//    public static void main(String[] args) throws Exception {
+//        AccessTools access=new AccessTools();
+//        Connection connection = access.getAccessConnection("D:\\Program Files (x86)\\PowerTestV3.5-SHT\\data\\1--jk-ye2011(12)00012-7.mdb", "", "");
+//        access.select(connection);
+//    }
     /**
      * Access查询
      *

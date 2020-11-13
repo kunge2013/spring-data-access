@@ -108,13 +108,13 @@ public class AESUtil {
         return encrypt(content, key);
     }
 
-    public static void main(String[] args) {
-        Certificate certificate = new Certificate();
-        certificate.setEndtime(System.currentTimeMillis() + 5 * 24 * 60 * 60 * 1000);
-        String v = JSON.toJSONString(certificate);
-        String encrypt = encrypt(v);
-        System.out.println(encrypt);
-    }
+//    public static void main(String[] args) {
+//        Certificate certificate = new Certificate();
+//        certificate.setEndtime(System.currentTimeMillis() + 5 * 24 * 60 * 60 * 1000);
+//        String v = JSON.toJSONString(certificate);
+//        String encrypt = encrypt(v);
+//        System.out.println(encrypt);
+//    }
 
 }
 

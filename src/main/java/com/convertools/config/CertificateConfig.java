@@ -23,8 +23,8 @@ import java.util.Date;
 public class CertificateConfig {
 
     private static Log logger = LogFactory.getLog(DataHandlerImpl.class);
-    @Value("${certificate.key}")
-    private String key;
+    // @Value("${certificate.key}")
+    private String key = "4656F5D3BD57E41B389E25D53E40035F60948AB2E0479EA461280AE2FB88CA050643587DDABE64FBFD2EF3981E288AEFA4B46EDEA9A8515AC6ACD1B58A3F9074C2F7637D632ACBE937DEAEB93617D94B5004A1DDAD6526B13D366D90B1B82106";
 
     @Bean
     public Certificate certificate() {
