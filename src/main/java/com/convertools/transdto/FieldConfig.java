@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Base64;
 import java.util.HashMap;
 
 /**
@@ -20,6 +21,7 @@ public class FieldConfig {
 
     @Bean
     public HashMap<String, String> fieldMapper() {
+        filejson = new String(Base64.getDecoder().decode(filejson));
         HashMap map = JSON.parseObject(filejson, HashMap.class);
         return map;
     }
