@@ -5,7 +5,6 @@ import com.convertools.AccessTools;
 import com.convertools.entity.Certificate;
 import com.convertools.entity.OutPutData;
 import com.convertools.entity.ParamFactValue;
-import com.convertools.transdto.ResultDTO;
 import okhttp3.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -163,7 +162,7 @@ public class DataHandlerImpl implements DataHandler {
                     throw  new RuntimeException("call inf fail ");
                 }
             } catch (IOException e) {
-                logger.error("outPutData 执行出错.... " + bodyStr);
+                logger.error("outPutData 执行出错.... " + bodyStr, e);
             }
         }
 
@@ -192,12 +191,13 @@ public class DataHandlerImpl implements DataHandler {
                 /*存入集合*/
                 paramFactValues.add(paramFactValue);
             }
+            logger.info("paramFactValues data == " + JSON.toJSONString(paramFactValues) + ", fieldMapper ====" + JSON.toJSONString(fieldMapper));
             if (!paramFactValues.isEmpty())  {
                 for (ParamFactValue paramFactValue : paramFactValues) {
-                    String name = paramFactValue.getName().toLowerCase();
+                    String name = paramFactValue.getName().trim().toLowerCase();
                     /*动态赋值*/
-                    if (fieldMapper.containsKey(name.toLowerCase())) {
-                        map.put(fieldMapper.get(name.toLowerCase()), paramFactValue.getTheValue());
+                    if (fieldMapper.containsKey(name)) {
+                        map.put(fieldMapper.get(name), paramFactValue.getTheValue());
                     }
                 }
             }
