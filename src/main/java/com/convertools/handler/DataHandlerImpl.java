@@ -148,6 +148,7 @@ public class DataHandlerImpl implements DataHandler {
             String bodyStr = JSON.toJSONString(map);
             logger.info("params key = " + JSON.toJSONString(map.keySet()));
             Request.Builder builder = new Request.Builder();
+            logger.info("data === " + bodyStr);
             RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr);
             Request request = new Request.Builder()
                     .url(url)
