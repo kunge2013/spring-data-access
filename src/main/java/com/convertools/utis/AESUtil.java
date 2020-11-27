@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Date;
 
 /**
  * @author fangkun
@@ -110,10 +111,14 @@ public class AESUtil {
 
     public static void main(String[] args) {
         Certificate certificate = new Certificate();
-        certificate.setEndtime(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000);
+        certificate.setEndtime((System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000l));
         String v = JSON.toJSONString(certificate);
         String encrypt = encrypt(v);
         System.out.println(encrypt);
+        String content = AESUtil.decrypt(encrypt);
+        System.out.println(content);
+        Certificate certificate1 = JSON.parseObject(content, Certificate.class);
+        System.out.println(certificate1);
     }
 
 }
