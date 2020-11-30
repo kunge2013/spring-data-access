@@ -171,6 +171,9 @@ public class DataHandlerImpl implements DataHandler {
 
     private Map<String, Object> parseData(OutPutData outPutData) {
         Map<String, Object> map = outPutData.convertToMap();
+        for (String s : map.keySet()) {
+            map.put(s, String.valueOf(map.get(s)));
+        }
         String savefilename = outPutData.getSavefilename();
         String filePath = dataPathDir +  savefilename;
         AccessTools tools = new AccessTools();
