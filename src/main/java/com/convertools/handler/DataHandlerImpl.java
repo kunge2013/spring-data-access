@@ -157,7 +157,7 @@ public class DataHandlerImpl implements DataHandler {
             try {
                 Response response = client.newCall(request).execute();
                 if (response.isSuccessful() && "Ok".equalsIgnoreCase(response.message())) {
-                    logger.info("执行成功  返回结果为 response =" +  JSON.toJSONString(response) +", messge =" + response.message());
+                    logger.info("执行成功  返回结果为 response =" +  JSON.toJSONString(response) +", message =" + response.message());
                 } else {
                     logger.error(" .... 接口 调用出错.... " + bodyStr + ", response = " + JSON.toJSONString(response));
                     throw  new RuntimeException("call inf fail ");
