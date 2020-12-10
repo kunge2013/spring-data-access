@@ -15,14 +15,14 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.*;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DecimalFormat;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @author fangkun
@@ -71,6 +71,9 @@ public class DataHandlerImpl implements DataHandler {
     @Value("${device.no}")
     private String code;
 
+    /*数字校验器*/
+   final Pattern numValidatePattern = Pattern.compile("^(-?\\d+)(\\.\\d+)?$");
+
     @Autowired
     private Certificate certificate;
     @Override
@@ -100,7 +103,10 @@ public class DataHandlerImpl implements DataHandler {
 
             String latestid = sb.toString();// 第一行最后一个处理的id
             /*当前最大的id*/
-            int maxId = jdbcTemplate.queryForObject("select max(Id) from outputdata", Integer.class);
+            Integer maxId = jdbcTemplate.queryForObject("select max(Id) from outputdata", Integer.class);
+            if (maxId == null) {
+                maxId = 0;
+            }
             if (latestid == null || latestid.isEmpty()) {
                 latestid = "0";
                 if (!uploadinitall) {
@@ -142,10 +148,34 @@ public class DataHandlerImpl implements DataHandler {
             }
         }
         OkHttpClient client = builder.build();
+        Map<String, Object> datas = new HashMap<>();
         for (OutPutData outPutData : dataSet) {
             Map<String, Object> map = parseData(outPutData);
             map.put("code", code);//设备编号
-            String bodyStr = JSON.toJSONString(map);
+            /***********************删除测试字段***********************/
+            /*等待删除*/
+            map.put("lo", "900");
+            Set<String> keySet = fieldMapper.keySet();
+            for (String k : keySet) {
+                k = fieldMapper.get(k);
+                if (map.containsKey(k)) {
+                    Object val = map.get(k);
+                    val = String.valueOf(val);
+                    CharSequence charSequence = new String(String.valueOf(val));
+                    if (numValidatePattern.matcher(charSequence).matches()) {
+//                        datas.put(k, Double.parseDouble(String.valueOf(val)));
+                        /*保留两位小数*/
+                        datas.put(k, formatVal(Double.parseDouble(String.valueOf(val)), "#0.00"));
+                    } else {
+                        datas.put(k, map.get(k));
+                    }
+                }
+                map.remove(k);
+            }
+            String bodyStr = JSON.toJSONString(datas);
+            /**********************************************/
+
+
             logger.info("params key = " + JSON.toJSONString(map.keySet()));
             Request.Builder builder = new Request.Builder();
             logger.info("data === " + bodyStr);
@@ -225,5 +255,21 @@ public class DataHandlerImpl implements DataHandler {
             }
         }
         return map;
+    }
+
+    /**
+     * 保留小数
+     * @param val
+     * @param newScale
+     * @return
+     */
+    public static double formatVal(double val, int newScale) {
+        BigDecimal bg = new BigDecimal(val);
+        return bg.setScale(newScale, BigDecimal.ROUND_HALF_UP).doubleValue();
+    }
+
+    public static String formatVal(double val, String pattern) {
+        DecimalFormat format = new DecimalFormat(pattern);
+        return format.format(val);
     }
 }
