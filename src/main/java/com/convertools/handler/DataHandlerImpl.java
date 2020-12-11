@@ -5,6 +5,7 @@ import com.convertools.AccessTools;
 import com.convertools.entity.Certificate;
 import com.convertools.entity.OutPutData;
 import com.convertools.entity.ParamFactValue;
+import com.convertools.entity.UpData;
 import okhttp3.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.*;
 import java.sql.Connection;
@@ -100,7 +102,10 @@ public class DataHandlerImpl implements DataHandler {
 
             String latestid = sb.toString();// 第一行最后一个处理的id
             /*当前最大的id*/
-            int maxId = jdbcTemplate.queryForObject("select max(Id) from outputdata", Integer.class);
+            Integer maxId = jdbcTemplate.queryForObject("select max(Id) from outputdata", Integer.class);
+            if (maxId  == null) {
+                maxId = 0;
+            }
             if (latestid == null || latestid.isEmpty()) {
                 latestid = "0";
                 if (!uploadinitall) {
@@ -143,10 +148,12 @@ public class DataHandlerImpl implements DataHandler {
         }
         OkHttpClient client = builder.build();
         for (OutPutData outPutData : dataSet) {
-            Map<String, Object> map = parseData(outPutData);
-            map.put("code", code);//设备编号
-            String bodyStr = JSON.toJSONString(map);
-            logger.info("params key = " + JSON.toJSONString(map.keySet()));
+            UpData upData = convertData(outPutData);
+            upData.setCode("美特斯拉伸机");
+            // Map<String, Object> map = parseData(outPutData);
+            // map.put("code", "美特斯拉伸机");//设备编号
+            String bodyStr = JSON.toJSONString(upData);
+            // logger.info("params key = " + JSON.toJSONString(map.keySet()));
             Request.Builder builder = new Request.Builder();
             logger.info("data === " + bodyStr);
             RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr);
@@ -222,5 +229,72 @@ public class DataHandlerImpl implements DataHandler {
             }
         }
         return map;
+    }
+
+    public UpData convertData(OutPutData outPutData) {
+        UpData upData = new UpData();
+        Map<String, Object> map = outPutData.convertToMap();
+
+        String savefilename = outPutData.getSavefilename();
+        String filePath = dataPathDir +  savefilename;
+        AccessTools tools = new AccessTools();
+        Connection connection = null;
+        Statement statement = null;
+        try {
+            connection = tools.getConnection(filePath, user, password);
+            statement = connection.createStatement();
+            ResultSet result = statement.executeQuery("select TestNo,littleNo,Name,TheValue,Unit,UserOrResultParam from ParamFactValue where TestNo =" + outPutData.getTestid());
+            List<ParamFactValue> paramFactValues = new ArrayList<>();
+            while (result.next()) {
+                ParamFactValue paramFactValue = new ParamFactValue();
+                paramFactValue.setTestNo(result.getInt("TestNo"));
+                paramFactValue.setLittleNo(result.getInt("littleNo"));
+                paramFactValue.setName(result.getString("Name"));
+                paramFactValue.setTheValue(result.getString("TheValue"));
+                paramFactValue.setUnit(result.getString("Unit"));
+                paramFactValue.setUserOrResultParam(result.getInt("UserOrResultParam"));
+                /*存入集合*/
+                paramFactValues.add(paramFactValue);
+            }
+            logger.info("paramFactValues data == " + JSON.toJSONString(paramFactValues) + ", fieldMapper ====" + JSON.toJSONString(fieldMapper));
+            if (!paramFactValues.isEmpty())  {
+                for (ParamFactValue paramFactValue : paramFactValues) {
+                    String name = paramFactValue.getName().trim().toLowerCase();
+                    /*动态赋值*/
+                    if (fieldMapper.containsKey(name)) {
+                        map.put(fieldMapper.get(name), paramFactValue.getTheValue());
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            logger.error("转换数据失败!!!! outPutData id = " + outPutData.getId() + ", outPutData = " + JSON.toJSONString(outPutData), e);
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+        }
+        String infoStr = JSON.toJSONString(map);
+        logger.info("map data ====== ======>>>> " + infoStr);
+        upData = JSON.parseObject(infoStr, UpData.class);
+        /**/
+        {
+            upData.setECorder(outPutData.getTestno());
+            upData.setOperators(outPutData.getOperatorname());
+            upData.setSampleNo(outPutData.getSampleno());
+        }
+        logger.info("转换后的数据 map data ====== ======>>>> " + JSON.toJSONString(upData));
+        return upData;
     }
 }

@@ -25,7 +25,7 @@ public class FieldConfig {
         filejson = new String(Base64.getDecoder().decode(filejson));
         HashMap map = JSON.parseObject(filejson, HashMap.class);
         map.put("设备编号".trim().toLowerCase(),"code");
-        map.put("委托单号".trim().toLowerCase(),"ECorder");
+        map.put("委托单号".trim().toLowerCase(),"Ecorder");
         map.put("试样编号".trim().toLowerCase(),"SampleNo");
         map.put("试样直径".trim().toLowerCase(),"do");
         map.put("断后直径".trim().toLowerCase(),"du");
