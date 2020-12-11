@@ -77,6 +77,7 @@ public class DataHandlerImpl implements DataHandler {
     private Certificate certificate;
     @Override
     public void handler() {
+        logger.info("开始了 jsl ============== handler 开始了 ........");
         /*过期校验*/
         if (certificate.isInvalid()) {
             logger.info("certificate key 已过期...");
@@ -99,10 +100,11 @@ public class DataHandlerImpl implements DataHandler {
                 sb.append(text);
             }
             reader.close();
-
+            logger.info("......  查询网络数据数据 开始 .....");
             String latestid = sb.toString();// 第一行最后一个处理的id
             /*当前最大的id*/
             Integer maxId = jdbcTemplate.queryForObject("select max(Id) from outputdata", Integer.class);
+            logger.info("......  查询网络数据数据  结束.....");
             if (maxId  == null) {
                 maxId = 0;
             }
@@ -112,6 +114,7 @@ public class DataHandlerImpl implements DataHandler {
                     latestid = maxId + "";
                 }
             }
+            logger.info("开始了 jsl ============== latestid" + latestid);
             /*初始化上传所有*/
             //TODO 调用接口
             callInf(Integer.parseInt(latestid));
@@ -122,6 +125,7 @@ public class DataHandlerImpl implements DataHandler {
             os.write(bytes);
             os.flush();
             os.close();
+            logger.info("结束了 jsl ==============" );
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             logger.error("文件没找到" ,e );
@@ -163,6 +167,7 @@ public class DataHandlerImpl implements DataHandler {
                     .build();
             try {
                 Response response = client.newCall(request).execute();
+                logger.info("isSuccessful = " +  response.isSuccessful() +", 收到消息" + JSON.toJSONString(response)+ "== message " + response.message());
                 if (response.isSuccessful() && "Ok".equalsIgnoreCase(response.message())) {
                     logger.info("执行成功  返回结果为 response =" +  JSON.toJSONString(response) +", message =" + response.message());
                 } else {
