@@ -10,7 +10,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 public class UpData {
 
 //    "code":"美特斯",
-    private String code;
+    private String code= "美特斯拉伸机";
 //            "ECorder":"1",
 
     @JSONField(name = "ECorder")

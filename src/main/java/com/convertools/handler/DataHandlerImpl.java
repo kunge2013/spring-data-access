@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author fangkun
@@ -302,4 +304,104 @@ public class DataHandlerImpl implements DataHandler {
         logger.info("转换后的数据 map data ====== ======>>>> " + JSON.toJSONString(upData));
         return upData;
     }
+
+
+    public Map<Integer, List<ParamFactValue>> transtDataByfileName(String savefilename) {
+        UpData upData = new UpData();
+        Map<String, Object> map = new HashMap<>();
+        String filePath = dataPathDir +  savefilename;
+        AccessTools tools = new AccessTools();
+        Connection connection = null;
+        Statement statement = null;
+        try {
+            connection = tools.getConnection(filePath, user, password);
+            statement = connection.createStatement();
+            ResultSet result = statement.executeQuery("select TestNo,littleNo,Name,TheValue,Unit,UserOrResultParam from ParamFactValue");
+            List<ParamFactValue> paramFactValues = new ArrayList<>();
+            while (result.next()) {
+                ParamFactValue paramFactValue = new ParamFactValue();
+                paramFactValue.setTestNo(result.getInt("TestNo"));
+                paramFactValue.setLittleNo(result.getInt("littleNo"));
+                paramFactValue.setName(result.getString("Name"));
+                paramFactValue.setTheValue(result.getString("TheValue"));
+                paramFactValue.setUnit(result.getString("Unit"));
+                paramFactValue.setUserOrResultParam(result.getInt("UserOrResultParam"));
+                /*存入集合*/
+                paramFactValues.add(paramFactValue);
+            }
+            logger.info("paramFactValues data == " + JSON.toJSONString(paramFactValues));
+            /*分组返回 */
+            if (!paramFactValues.isEmpty()) {
+                return paramFactValues.stream().collect(Collectors.groupingBy(d -> d.getTestNo()));
+            }
+        } catch (Exception e) {
+            logger.error("转换数据失败!!!! ", e);
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+        }
+        return new HashMap<>();
+    }
+
+
+    public UpData convertByParamFactValues(String fileName, List<ParamFactValue> paramFactValues) {
+        Map<String, String> map = new HashMap<>();
+        if (!paramFactValues.isEmpty())  {
+            for (ParamFactValue paramFactValue : paramFactValues) {
+                String name = paramFactValue.getName().trim().toLowerCase();
+                /*动态赋值*/
+                if (fieldMapper.containsKey(name)) {
+                    map.put(fieldMapper.get(name), paramFactValue.getTheValue());
+                }
+            }
+        }
+        String infoStr = JSON.toJSONString(map);
+        UpData upData = JSON.parseObject(infoStr, UpData.class);
+        return upData;
+    }
+
+
+    @Async
+    public void callHttp(String filename) {
+        OkHttpClient client = builder.build();
+        String url = host + uploadPath;
+        Map<Integer, List<ParamFactValue>> integerListMap = transtDataByfileName(filename);
+        for (Integer integer : integerListMap.keySet()) {
+            UpData upData = convertByParamFactValues(filename, integerListMap.get(integer));
+            String bodyStr = JSON.toJSONString(upData);
+            Request.Builder builder = new Request.Builder();
+            logger.info("data === " + bodyStr);
+            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr);
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(body)
+                    .build();
+            try {
+                Response response = client.newCall(request).execute();
+                logger.info("isSuccessful = " +  response.isSuccessful() +", 收到消息" + JSON.toJSONString(response)+ "== message " + response.message());
+                if (response.isSuccessful() && "Ok".equalsIgnoreCase(response.message())) {
+                    logger.info("执行成功  返回结果为 response =" +  JSON.toJSONString(response) +", message =" + response.message());
+                } else {
+                    logger.error(" .... 接口 调用出错.... " + bodyStr + ", response = " + JSON.toJSONString(response));
+                    throw  new RuntimeException("call inf fail ");
+                }
+            } catch (IOException e) {
+                logger.error("outPutData 执行出错.... " + bodyStr, e);
+            }
+
+        }
+    }
+
 }

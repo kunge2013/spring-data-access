@@ -1,36 +1,35 @@
 #datasource setting
-# æ•°æ®åº“é©±åŠ¨
+# Êı¾İ¿âÇı¶¯
 spring.datasource.driver-class-name=net.ucanaccess.jdbc.UcanaccessDriver
-# æ•°æ®åº“ æ–‡ä»¶
+# Êı¾İ¿â ÎÄ¼ş
 spring.datasource.url=jdbc:ucanaccess://D:\\Program Files (x86)\\PowerTestV3.5-SHT\\Network\\TransDataDB.mdb
-#æ•°æ®åº“å¯†ç 
+#Êı¾İ¿âÃÜÂë
 spring.datasource.username=
-#æ•°æ®åº“ç”¨æˆ·
+#Êı¾İ¿âÓÃ»§
 spring.datasource.password=
-# Hikari æ•°æ®æºä¸“ç”¨é…ç½®
+# Hikari Êı¾İÔ´×¨ÓÃÅäÖÃ
 spring.datasource.hikari.maximum-pool-size=20
 spring.datasource.hikari.minimum-idle=5
-#å­˜å‚¨å¤„ç†æœ€å¤§åç§»é‡
+#´æ´¢´¦Àí×î´óÆ«ÒÆÁ¿
 temp.file.path=D://test//temp.ini
-#åˆå§‹åŒ–æ˜¯å¦ä¸Šä¼ ä¹‹å‰çš„æ‰€æœ‰æ•°æ®  true ä¸Šä¼ æ‰€æœ‰ false ä¸ä¼ 
+#³õÊ¼»¯ÊÇ·ñÉÏ´«Ö®Ç°µÄËùÓĞÊı¾İ  true ÉÏ´«ËùÓĞ false ²»´«
 upload.initall=true
-#ä¸ŠæŠ¥æ¥å£åœ°å€
+#ÉÏ±¨½Ó¿ÚµØÖ·
 upload.host=http://192.168.160.72:49993
-#ä¸ŠæŠ¥æ¥å£è·¯å¾„
+#ÉÏ±¨½Ó¿ÚÂ·¾¶
 upload.uploadPath=/api/v1/code
-# è®¡ç®—å‚æ•°æ–‡ä»¶è·¯å¾„
+# ¼ÆËã²ÎÊıÎÄ¼şÂ·¾¶
 data.path.dir=jdbc:ucanaccess://D:\\Program Files (x86)\\PowerTestV3.5-SHT\\data\\
-#è®°å½•æ•°æ®åº“åœ°å€
+#¼ÇÂ¼Êı¾İ¿âµØÖ·
 data.path=D:\\Program Files (x86)\\PowerTestV3.5-SHT\\data\\
-# è®¡ç®—å‚æ•°æ–‡ä»¶æ•°æ®åº“ç”¨æˆ·
+# ¼ÆËã²ÎÊıÎÄ¼şÊı¾İ¿âÓÃ»§
 data.path.user=
-# è®¡ç®—å‚æ•°æ–‡ä»¶æ•°æ®åº“å¯†ç 
+# ¼ÆËã²ÎÊıÎÄ¼şÊı¾İ¿âÃÜÂë
 data.path.password=
-# è®¾å¤‡ç¼–å·
-#device.no=ç¾ç‰¹æ–¯æ‹‰ä¼¸æœº
-device.no=\u7f8e\u7279\u65af\u62c9\u4f38\u673a
-# éœ€è¦ä¸ŠæŠ¥çš„æœ‰æ•ˆå­—æ®µ
+# Éè±¸±àºÅ
+device.no=ÃÀÌØË¹À­Éì»ú
+# ĞèÒªÉÏ±¨µÄÓĞĞ§×Ö¶Î
 result.fieldmap=eyLop4TlrprloZHmgKflu7bkvLjlvLrluqbvvIhScO+8iSI6IlJwMC4yIiwi6KeE5a6a5oC75bu25Ly45Yqb77yIZnTvvIkiOiJGdCIsIuivleagt+e8luWPtyI6IlNhbXBsZU5vIiwi6ZKi5p2Q5ZOB56eNIjoiZ2NweiIsIuaWremdouaUtue8qeeOh++8iHrvvIkiOiJaIiwi5oqX5ouJ5by65bqm77yIcm3vvIkiOiJSTSIsIuaWreWQjuagh+i3ne+8iGx177yJIjoibHUiLCLorr7lpIfnvJblj7ciOiJjb2RlIiwi6KeE5a6a5oC75bu25Ly45by65bqm77yIcnTvvIkiOiJSdCIsIuaTjeS9nOWRmCI6Im9wZXJhdG9ycyIsIuaWreWQjuS8uOmVv+eOh++8iGHvvIkiOiJBIiwi5Y6f5aeL5qCH6Led77yIbG/vvIkiOiJsbyIsIuaWreWQjuebtOW+hCI6ImR1Iiwi6K+V5qC355u05b6EIjoiZG8iLCLkuIvlsYjmnI3lipvvvIhmZWzvvIkiOiJGZWwiLCLkuIrlsYjmnI3lipvvvIhmZWjvvIkiOiJGZUgiLCLor5Xpqozml7bpl7QiOiJXb3JrVGltZSIsIuWnlOaJmOWNleWPtyI6IkVDb3JkZXIiLCLkuIrlsYjmnI3lipvlvLrluqbvvIhyZWjvvIkiOiJSZUgiLCLkuIvlsYjmnI3lvLrluqbvvIhyZWzvvIkiOiJSZUwiLCLop4TlrprloZHmgKflu7bkvLjlipvvvIhmcO+8iSI6IkZwIiwi5pyA5aSn5Yqb77yIZm3vvIkiOiJGbSJ9
-# è¯ä¹¦å¯†é’¥
+# Ö¤ÊéÃÜÔ¿
 certificate.key=2297959FC5B7CBF5C0315E02BB4BFA0D257E40F9BFE63D5B3851C07514D196F70643587DDABE64FBFD2EF3981E288AEFA4B46EDEA9A8515AC6ACD1B58A3F9074C2F7637D632ACBE937DEAEB93617D94B5004A1DDAD6526B13D366D90B1B82106
 check.cron=0 0/1 * * * ?
