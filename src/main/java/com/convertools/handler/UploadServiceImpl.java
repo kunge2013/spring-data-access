@@ -128,7 +128,8 @@ public class UploadServiceImpl implements UploadService {
     public UpData convertByParamFactValues(int simpleNo, String fileName, List<ParamFactValue> paramFactValues) {
         Map<String, String> map = new HashMap<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        SimpleDateFormat workTimeFormat = new SimpleDateFormat("yyMMddHHmm");
+        SimpleDateFormat workTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat encoderFormat = new SimpleDateFormat("yyMMddHHmm");
         String dateStr = fileName.substring(0, 19);
         String workTime = "";
         String encoder = "";
@@ -136,7 +137,7 @@ public class UploadServiceImpl implements UploadService {
         try {
              date = dateFormat.parse(dateStr);
              workTime  = workTimeFormat.format(date);
-             encoder  = workTimeFormat.format(date);
+             encoder  = encoderFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -157,9 +158,12 @@ public class UploadServiceImpl implements UploadService {
         if( upData.getSampleNo() == null || upData.getSampleNo().isEmpty()) {
             upData.setSampleNo("" + simpleNo);
         }
+
+        if (upData.getECorder() == null || upData.getECorder().isEmpty()) {
+            upData.setECorder(encoder);
+        }
         upData.setWorkTime(workTime);
         upData.setOperators("管理员");
-        upData.setECorder(encoder);
         return upData;
     }
 
