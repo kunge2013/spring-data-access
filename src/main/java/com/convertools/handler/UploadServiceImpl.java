@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class UploadServiceImpl implements UploadService {
 
 
-    private static Log logger = LogFactory.getLog(DataHandlerImpl.class);
+    private static Log logger = LogFactory.getLog(UploadServiceImpl.class);
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -128,13 +128,15 @@ public class UploadServiceImpl implements UploadService {
     public UpData convertByParamFactValues(int simpleNo, String fileName, List<ParamFactValue> paramFactValues) {
         Map<String, String> map = new HashMap<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        SimpleDateFormat workTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat workTimeFormat = new SimpleDateFormat("yyMMddHHmm");
         String dateStr = fileName.substring(0, 19);
         String workTime = "";
+        String encoder = "";
         Date date = null;
         try {
              date = dateFormat.parse(dateStr);
              workTime  = workTimeFormat.format(date);
+             encoder  = workTimeFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -153,10 +155,11 @@ public class UploadServiceImpl implements UploadService {
         upData.setCode(code);
         /*试样编号生成处理*/
         if( upData.getSampleNo() == null || upData.getSampleNo().isEmpty()) {
-            upData.setSampleNo(dateStr + "-" + simpleNo);
+            upData.setSampleNo("" + simpleNo);
         }
         upData.setWorkTime(workTime);
         upData.setOperators("管理员");
+        upData.setECorder(encoder);
         return upData;
     }
 
