@@ -13,6 +13,7 @@ public class UpData {
     private String code= "美特斯拉伸机";
 //            "ECorder":"1",
 
+    /*委托单号*/
     @JSONField(name = "ECorder")
     private String ECorder;
 //            "SampleNo":"2",
@@ -78,6 +79,18 @@ public class UpData {
     //            "RP":6
     @JSONField(name = "RP")
     private double RP;
+
+    /*项目编号*/
+    //    @JSONField(name = "projectNo")
+    //    private String projectNo;
+    //
+    //    public String getProjectNo() {
+    //        return projectNo;
+    //    }
+    //
+    //    public void setProjectNo(String projectNo) {
+    //        this.projectNo = projectNo;
+    //    }
 
     public String getCode() {
         return code;

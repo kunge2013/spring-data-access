@@ -129,15 +129,18 @@ public class UploadServiceImpl implements UploadService {
         Map<String, String> map = new HashMap<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         SimpleDateFormat workTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat encoderFormat = new SimpleDateFormat("yyMMddHHmm");
+        SimpleDateFormat encoderFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        SimpleDateFormat projectNoFormat = new SimpleDateFormat("yyyyMMddHHmm");
         String dateStr = fileName.substring(0, 19);
         String workTime = "";
+        String projectNo = "";
         String encoder = "";
         Date date = null;
         try {
              date = dateFormat.parse(dateStr);
              workTime  = workTimeFormat.format(date);
              encoder  = encoderFormat.format(date);
+             projectNo  = projectNoFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -156,14 +159,20 @@ public class UploadServiceImpl implements UploadService {
         upData.setCode(code);
         /*试样编号生成处理*/
         if( upData.getSampleNo() == null || upData.getSampleNo().isEmpty()) {
-            upData.setSampleNo("" + simpleNo);
+            upData.setSampleNo("第" + simpleNo + "根");
         }
-
+//        /*项目编号*/
+//        if (upData.getProjectNo() == null || upData.getProjectNo().isEmpty()) {
+//            upData.setProjectNo(projectNo);
+//        }
+        /*委托单号*/
         if (upData.getECorder() == null || upData.getECorder().isEmpty()) {
             upData.setECorder(encoder);
         }
+        /*委托单号*/
         upData.setWorkTime(workTime);
         upData.setOperators("管理员");
+        /*项目编号*/
         return upData;
     }
 
@@ -183,8 +192,9 @@ public class UploadServiceImpl implements UploadService {
             if (a < b) return -1;
             else return 0;
         });
+        int  i = 0;
         for (Integer integer : keyList) {
-            UpData upData = convertByParamFactValues(integer ,filename, integerListMap.get(integer));
+            UpData upData = convertByParamFactValues(i++ ,filename, integerListMap.get(integer));
             String bodyStr = JSON.toJSONString(upData);
             logger.info("data === " + bodyStr);
             RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr);
