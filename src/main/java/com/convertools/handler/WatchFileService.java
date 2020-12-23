@@ -21,7 +21,9 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -95,19 +97,26 @@ public class WatchFileService implements InitializingBean, AutoCloseable {
                 boolean reset = take.reset();
                 log.error( "reset status", reset);
                 log.info("operatorMap {}", JSON.toJSONString(operatorMap));
-                for (String fileName: operatorMap.keySet()) {
-                    try {
-                        service.callHttp(fileName);
-                    } catch (Exception e) {
-                        log.error( "callHttp  error retry 1{}", fileName, e);
+                if (!operatorMap.isEmpty()) {
+                   Set<String> files = new HashSet<>(operatorMap.keySet());
+                   log.info("files === >>>>> ", JSON.toJSONString(files));
+                   /*清空记录*/
+                   operatorMap.clear();
+                   for (String fileName: files) {
                         try {
-                            Thread.sleep(1000l * 30);
                             service.callHttp(fileName);
-                        } catch (Exception e1) {
-                            log.error( "callHttp  error continue ....", fileName, e1);
-                        }
+                        } catch (Exception e) {
+                            log.error( "callHttp  error retry 1{}", fileName, e);
+                            try {
+                                Thread.sleep(1000l * 30);
+                                service.callHttp(fileName);
+                            } catch (Exception e1) {
+                                log.error( "callHttp  error continue ....", fileName, e1);
+                            }
+                      }
                     }
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
                 log.error("报错了 ========", e);
