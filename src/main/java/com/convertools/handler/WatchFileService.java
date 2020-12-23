@@ -1,5 +1,6 @@
 package com.convertools.handler;
 
+import com.alibaba.fastjson.JSON;
 import com.convertools.entity.Certificate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.logging.Log;
@@ -14,10 +15,14 @@ import org.springframework.context.Lifecycle;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * @author fangkun
@@ -77,15 +82,31 @@ public class WatchFileService implements InitializingBean, AutoCloseable {
                     log.info("filename: " + filename);
                     String fname = filename.toString();
                     if (fname.endsWith(".mdb") || fname.endsWith(".MDB")) {
-                        operatorMap.put(fname, kind.name());
+                        File file = new File(path.toString() + File.separator + fname);
+                        long time = file.lastModified();
+                        /*只更新20分钟的数据*/
+                        if(System.currentTimeMillis()  - time < 1000l * 60 * 3) {
+                            operatorMap.put(fname, kind.name());
+                        }
                     }
                 }
                 // 上传数据
                 // 重设WatchKey
                 boolean reset = take.reset();
-                log.info("重置结果为 {}", reset);
+                log.error( "reset status", reset);
+                log.info("operatorMap {}", JSON.toJSONString(operatorMap));
                 for (String fileName: operatorMap.keySet()) {
-                    service.callHttp(fileName);
+                    try {
+                        service.callHttp(fileName);
+                    } catch (Exception e) {
+                        log.error( "callHttp  error retry 1{}", fileName, e);
+                        try {
+                            Thread.sleep(1000l * 30);
+                            service.callHttp(fileName);
+                        } catch (Exception e1) {
+                            log.error( "callHttp  error continue ....", fileName, e1);
+                        }
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();

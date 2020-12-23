@@ -1,6 +1,7 @@
 package com.convertools.handler;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.convertools.AccessTools;
 import com.convertools.entity.Certificate;
 import com.convertools.entity.ParamFactValue;
@@ -125,6 +126,7 @@ public class UploadServiceImpl implements UploadService {
     }
 
 
+
     public UpData convertByParamFactValues(int simpleNo, String fileName, List<ParamFactValue> paramFactValues) {
         Map<String, String> map = new HashMap<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
@@ -146,14 +148,16 @@ public class UploadServiceImpl implements UploadService {
         }
         if (!paramFactValues.isEmpty())  {
             logger.info("paramFactValues data ======>>> " + JSON.toJSONString(paramFactValues));
+            logger.info("fieldMapper  ======>>> " + JSON.toJSONString(fieldMapper));
             for (ParamFactValue paramFactValue : paramFactValues) {
                 String name = paramFactValue.getName().trim().toLowerCase();
-                /*动态赋值*/
+                logger.info("name = "  +  name  + "val = " + paramFactValue.getTheValue() + fieldMapper.containsKey(name));
                 if (fieldMapper.containsKey(name)) {
                     map.put(fieldMapper.get(name), paramFactValue.getTheValue());
                 }
             }
         }
+        logger.info("map data ======>>> " + JSON.toJSONString(map));
         String infoStr = JSON.toJSONString(map);
         UpData upData = JSON.parseObject(infoStr, UpData.class);
         upData.setCode(code);
@@ -194,7 +198,7 @@ public class UploadServiceImpl implements UploadService {
         });
         int  i = 0;
         for (Integer integer : keyList) {
-            UpData upData = convertByParamFactValues(i++ ,filename, integerListMap.get(integer));
+            UpData upData = convertByParamFactValues(++ i ,filename, integerListMap.get(integer));
             String bodyStr = JSON.toJSONString(upData);
             logger.info("data === " + bodyStr);
             RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr);
@@ -217,10 +221,70 @@ public class UploadServiceImpl implements UploadService {
             }
         }
     }
-
     public static void main(String[] args) throws ParseException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        Date date = dateFormat.parse("2020-01-12-16-11-10");
-        System.out.println(date);
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+//        Date date = dateFormat.parse("2020-01-12-16-11-10");
+//        System.out.println(date);
+        Map<String, String> map = new HashMap<>();
+        map.put("设备编号".trim().toLowerCase(),"code");
+        map.put("委托单号".trim().toLowerCase(),"ECorder");
+        map.put("试样编号".trim().toLowerCase(),"SampleNo");
+        map.put("试样直径".trim().toLowerCase(),"do");
+        map.put("断后直径".trim().toLowerCase(),"du");
+        map.put("原始标距（Lo）".trim().toLowerCase(),"lo");
+        map.put("断后标距（Lu）".trim().toLowerCase(),"lu");
+        map.put("最大力（Fm）".trim().toLowerCase(),"Fm");
+        map.put("最大力（Fm）".trim().toLowerCase(),"Fm");
+
+        map.put("规定塑性延伸力（Fp）".trim().toLowerCase(),"Fp");
+        map.put("规定塑性延伸强度（Rp）","Rp0.2");
+        map.put("规定非比例延伸强度（Rp）","Rp0.2");
+
+
+        map.put("断后伸长率（A）".trim().toLowerCase(),"A");
+        map.put("断后伸长率（A）".trim().toLowerCase(),"A");
+
+
+        map.put("断面收缩率（Z）".trim().toLowerCase(),"Z");
+        map.put("断面收缩率（Z）".trim().toLowerCase(),"Z");
+
+        map.put("抗拉强度（Rm）".trim().toLowerCase(),"RM");
+
+        map.put("下屈服力（FeL）".trim().toLowerCase(),"Fel");
+        map.put("屈服力（FeL）".trim().toLowerCase(),"Fel");
+
+        map.put("上屈服力强度（ReH）".trim().toLowerCase(),"ReH");
+        map.put("上屈服力（FeH）".trim().toLowerCase(),"FeH");
+        map.put("下屈服强度（ReL）".trim().toLowerCase(),"ReL");
+        map.put("屈服强度（ReL）".trim().toLowerCase(),"ReL");
+
+
+        map.put("规定总延伸力（Ft）".trim().toLowerCase(),"Ft");
+        map.put("规定总延伸强度（Rt）".trim().toLowerCase(),"Rt");
+        map.put("试验时间".trim().toLowerCase(),"WorkTime");
+        map.put("操作员".trim().toLowerCase(),"operators");
+        map.put("钢材品种".trim().toLowerCase(),"gcpz");
+
+
+
+        /*扩展字段*/
+        map.put("试样直径（d）".trim().toLowerCase(),"试样直径（d）");
+        map.put("断后直径（du）".trim().toLowerCase(),"断后直径（du）");
+        List<ParamFactValue> list = JSON.parseObject("[{\"littleNo\":0,\"name\":\"试样直径（d）\",\"testNo\":2482,\"theValue\":\"10\",\"unit\":\"mm\",\"userOrResultParam\":0},{\"littleNo\":1,\"name\":\"断后直径（du）\",\"testNo\":2482,\"theValue\":\"\",\"unit\":\"mm\",\"userOrResultParam\":0},{\"littleNo\":2,\"name\":\"原始标距（Lo）\",\"testNo\":2482,\"theValue\":\"50\",\"unit\":\"mm\",\"userOrResultParam\":0},{\"littleNo\":3,\"name\":\"断后标距（Lu）\",\"testNo\":2482,\"theValue\":\"\",\"unit\":\"mm\",\"userOrResultParam\":0},{\"littleNo\":4,\"name\":\"委托单号\",\"testNo\":2482,\"theValue\":\"536834\",\"unit\":\"\",\"userOrResultParam\":0},{\"littleNo\":5,\"name\":\"试样编号\",\"testNo\":2482,\"theValue\":\"002\",\"unit\":\"\",\"userOrResultParam\":0},{\"littleNo\":0,\"name\":\"屈服力（FeL）\",\"testNo\":2482,\"theValue\":\"26100.7109\",\"unit\":\"kN\",\"userOrResultParam\":1},{\"littleNo\":1,\"name\":\"屈服强度（ReL）\",\"testNo\":2482,\"theValue\":\"332.3246\",\"unit\":\"MPa\",\"userOrResultParam\":1},{\"littleNo\":2,\"name\":\"规定非比例延伸强度（Rp）\",\"testNo\":2482,\"theValue\":\"\",\"unit\":\"MPa\",\"userOrResultParam\":1},{\"littleNo\":3,\"name\":\"最大力（Fm）\",\"testNo\":2482,\"theValue\":\"38240.7813\",\"unit\":\"kN\",\"userOrResultParam\":1},{\"littleNo\":4,\"name\":\"抗拉强度（Rm）\",\"testNo\":2482,\"theValue\":\"486.8969\",\"unit\":\"MPa\",\"userOrResultParam\":1},{\"littleNo\":5,\"name\":\"断后伸长率（A）\",\"testNo\":2482,\"theValue\":\"\",\"unit\":\"％\",\"userOrResultParam\":1},{\"littleNo\":6,\"name\":\"断面收缩率（Z）\",\"testNo\":2482,\"theValue\":\"\",\"unit\":\"％\",\"userOrResultParam\":1}]\n",
+                new TypeReference<List<ParamFactValue>>(){});
+        Map<Integer, List<ParamFactValue>> listMap = list.stream().collect(Collectors.groupingBy(d -> d.getTestNo()));
+        Map<String, String > dataMap = new HashMap<>();
+        listMap.forEach((k , v) -> {
+            for (ParamFactValue paramFactValue : v) {
+                String name = paramFactValue.getName().trim().toLowerCase();
+                /*动态赋值*/
+                if (map.containsKey(name)) {
+                    dataMap.put(map.get(name), paramFactValue.getTheValue());
+                }
+            }
+            String infoStr = JSON.toJSONString(dataMap);
+            UpData upData = JSON.parseObject(infoStr, UpData.class);
+            System.out.println(JSON.toJSONString(upData));
+        });
     }
 }
