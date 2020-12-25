@@ -88,8 +88,8 @@ public class FieldConfig {
 
 
             /*扩展字段*/
-            map.put("试样直径（d）".trim().toLowerCase(),"试样直径（d）");
-            map.put("断后直径（du）".trim().toLowerCase(),"断后直径（du）");
+            map.put("试样直径（d）".trim().toLowerCase(),"d");
+            map.put("断后直径（du）".trim().toLowerCase(),"du");
         }
         return map;
     }
