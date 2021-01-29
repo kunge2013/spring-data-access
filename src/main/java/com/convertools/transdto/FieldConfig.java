@@ -41,7 +41,7 @@ public class FieldConfig {
         map.put("断后标距（Lu）".trim().toLowerCase(),"lu");
         map.put("最大力（Fm）".trim().toLowerCase(),"Fm");
         map.put("规定塑性延伸力（Fp）".trim().toLowerCase(),"Fp");
-        map.put("规定塑性延伸强度（Rp）","RP");
+        map.put("规定塑性延伸强度（Rp）".trim().toLowerCase(),"RP");
         map.put("断后伸长率（A）".trim().toLowerCase(),"A");
         map.put("断面收缩率（Z）".trim().toLowerCase(),"Z");
         map.put("抗拉强度（Rm）".trim().toLowerCase(),"Rm");
@@ -113,7 +113,7 @@ public class FieldConfig {
             map.put("断后标距（Lu）".trim().toLowerCase(),"lu");
             map.put("最大力（Fm）".trim().toLowerCase(),"Fm");
             map.put("规定塑性延伸力（Fp）".trim().toLowerCase(),"Fp");
-            map.put("规定塑性延伸强度（Rp）","RP");
+            map.put("规定塑性延伸强度（Rp）".trim().toLowerCase(),"RP");
             map.put("断后伸长率（A）".trim().toLowerCase(),"A");
             map.put("断面收缩率（Z）".trim().toLowerCase(),"Z");
             map.put("抗拉强度（Rm）".trim().toLowerCase(),"Rm");
@@ -146,7 +146,7 @@ public class FieldConfig {
         map.put("断后标距（Lu）".trim().toLowerCase(),"lu");
         map.put("最大力（Fm）".trim().toLowerCase(),"Fm");
         map.put("规定塑性延伸力（Fp）".trim().toLowerCase(),"Fp");
-        map.put("规定塑性延伸强度（Rp）","RP");
+        map.put("规定塑性延伸强度（Rp）".trim().toLowerCase(),"RP");
         map.put("断后伸长率（A）".trim().toLowerCase(),"A");
         map.put("断面收缩率（Z）".trim().toLowerCase(),"Z");
         map.put("抗拉强度（Rm）".trim().toLowerCase(),"Rm");
@@ -218,7 +218,7 @@ public class FieldConfig {
             map.put("断后标距（Lu）".trim().toLowerCase(),"lu");
             map.put("最大力（Fm）".trim().toLowerCase(),"Fm");
             map.put("规定塑性延伸力（Fp）".trim().toLowerCase(),"Fp");
-            map.put("规定塑性延伸强度（Rp）","RP");
+            map.put("规定塑性延伸强度（Rp）".trim().toLowerCase(),"RP");
             map.put("断后伸长率（A）".trim().toLowerCase(),"A");
             map.put("断面收缩率（Z）".trim().toLowerCase(),"Z");
             map.put("抗拉强度（Rm）".trim().toLowerCase(),"Rm");
