@@ -74,8 +74,8 @@ public class FieldConfig {
 
             map.put("抗拉强度（Rm）".trim().toLowerCase(),"Rm");
 
-            map.put("下屈服力（FeL）".trim().toLowerCase(),"Fel");
-            map.put("屈服力（FeL）".trim().toLowerCase(),"Fel");
+            map.put("下屈服力（FeL）".trim().toLowerCase(),"FeL");
+            map.put("屈服力（FeL）".trim().toLowerCase(),"FeL");
 
             map.put("上屈服力强度（ReH）".trim().toLowerCase(),"ReH");
             map.put("上屈服力（FeH）".trim().toLowerCase(),"FeH");
@@ -179,8 +179,8 @@ public class FieldConfig {
 
             map.put("抗拉强度（Rm）".trim().toLowerCase(),"Rm");
 
-            map.put("下屈服力（FeL）".trim().toLowerCase(),"Fel");
-            map.put("屈服力（FeL）".trim().toLowerCase(),"Fel");
+            map.put("下屈服力（FeL）".trim().toLowerCase(),"FeL");
+            map.put("屈服力（FeL）".trim().toLowerCase(),"FeL");
 
             map.put("上屈服力强度（ReH）".trim().toLowerCase(),"ReH");
             map.put("上屈服力（FeH）".trim().toLowerCase(),"FeH");
