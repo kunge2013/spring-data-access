@@ -47,6 +47,8 @@ public class WatchFileService implements InitializingBean, AutoCloseable {
     private UploadService service;
 
 
+    @Value("${use.uploadext}")
+    private boolean useUploadExt;
 
     private Thread watchThread;
     @Override
@@ -104,12 +106,21 @@ public class WatchFileService implements InitializingBean, AutoCloseable {
                    operatorMap.clear();
                    for (String fileName: files) {
                         try {
-                            service.callHttp(fileName);
+                            if (useUploadExt) {
+                                service.callHttpExt(fileName);
+                            } else {
+                                service.callHttp(fileName);
+                            }
                         } catch (Exception e) {
                             log.error( "callHttp  error retry 1{}", fileName, e);
                             try {
                                 Thread.sleep(1000l * 30);
-                                service.callHttp(fileName);
+                                if (useUploadExt) {
+                                    service.callHttpExt(fileName);
+                                } else {
+                                    service.callHttp(fileName);
+                                }
+
                             } catch (Exception e1) {
                                 log.error( "callHttp  error continue ....", fileName, e1);
                             }

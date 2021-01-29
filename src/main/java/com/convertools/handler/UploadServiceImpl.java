@@ -33,6 +33,9 @@ import java.util.stream.Collectors;
 @Service
 public class UploadServiceImpl implements UploadService {
 
+    @Value("${result.fieldupset}")
+    private List<String> fieldupSet;
+
 
     private static Log logger = LogFactory.getLog(UploadServiceImpl.class);
 
@@ -181,6 +184,80 @@ public class UploadServiceImpl implements UploadService {
     }
 
 
+    public Map<String, Object> convertToMap(int simpleNo, String fileName, List<ParamFactValue> paramFactValues) {
+        Map<String, Object> map = new HashMap<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        SimpleDateFormat workTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat encoderFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        SimpleDateFormat projectNoFormat = new SimpleDateFormat("yyyyMMddHHmm");
+        String dateStr = fileName.substring(0, 19);
+        String workTime = "";
+        String projectNo = "";
+        String encoder = "";
+        Date date = null;
+        try {
+            date = dateFormat.parse(dateStr);
+            workTime  = workTimeFormat.format(date);
+            encoder  = encoderFormat.format(date);
+            projectNo  = projectNoFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (!paramFactValues.isEmpty())  {
+            logger.info("paramFactValues data ======>>> " + JSON.toJSONString(paramFactValues));
+            logger.info("fieldMapper  ======>>> " + JSON.toJSONString(fieldMapper));
+            for (ParamFactValue paramFactValue : paramFactValues) {
+                String name = paramFactValue.getName().trim().toLowerCase();
+                logger.info("name = "  +  name  + "val = " + paramFactValue.getTheValue() + fieldMapper.containsKey(name));
+
+                if (fieldMapper.containsKey(name)) {
+                    if (paramFactValue.getUnit() != null && !paramFactValue.getUnit().isEmpty()) {
+                        try {
+                            map.put(fieldMapper.get(name), (paramFactValue.getTheValue() == null || paramFactValue.getTheValue().isEmpty()) ? 0 : Double.parseDouble(paramFactValue.getTheValue()));
+                        } catch (Exception e) {
+                            logger.error("转化解析报错 , name = " + name +"val = " + paramFactValue.getTheValue(), e);
+                            map.put(fieldMapper.get(name), paramFactValue.getTheValue());
+                        }
+                    } else {
+                        map.put(fieldMapper.get(name), paramFactValue.getTheValue());
+                    }
+
+                }
+            }
+        }
+        logger.info("map data ======>>> " + JSON.toJSONString(map));
+
+        map.put("code", "美特斯拉伸机");
+        /*试样编号生成处理*/
+        if (!map.containsKey("simpleNo") ||  map.get("simpleNo") == null) {
+            map.put("simpleNo", "第" + simpleNo + "根");
+        }
+
+        if (!map.containsKey("ECorder") || map.get("ECorder") == null) {
+            map.put("ECorder", encoder);
+        }
+
+        map.put("WorkTime", workTime);
+        map.put("operators", "管理员");
+        /*过滤掉不需要的字段*/
+        Set<String> keySet = map.keySet();
+        // 最终
+        Map<String, Object> filterMap = new HashMap<>();
+        for (String fieldKey : keySet) {
+            if (fieldupSet.contains(fieldKey.trim())) {
+                filterMap.put(fieldKey, map.get(fieldKey));
+            }
+        }
+
+        for (String key : fieldupSet) {
+            if (!filterMap.containsKey(key)) {
+                logger.info("key ====>>>" + key);
+                filterMap.put(key, 0.0);
+            }
+        }
+        return filterMap;
+    }
+
     public void callHttp(String filename) {
         if (certificate.isInvalid()) {
             logger.info("certificate key 已过期...");
@@ -221,6 +298,50 @@ public class UploadServiceImpl implements UploadService {
             }
         }
     }
+
+
+    public void callHttpExt(String filename) {
+        if (certificate.isInvalid()) {
+            logger.info("certificate key 已过期...");
+            return;
+        }
+
+        OkHttpClient client = builder.build();
+        String url = host + uploadPath;
+        Map<Integer, List<ParamFactValue>> integerListMap = transtDataByfileName(filename);
+        List<Integer> keyList = new ArrayList<>(integerListMap.keySet());
+        keyList.sort((a,b) -> {
+            if (a > b) return 1;
+            if (a < b) return -1;
+            else return 0;
+        });
+        int  i = 0;
+        for (Integer integer : keyList) {
+            Map upData = convertToMap(++ i ,filename, integerListMap.get(integer));
+            String bodyStr = JSON.toJSONString(upData);
+            logger.info("data === " + bodyStr);
+            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr);
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(body)
+                    .build();
+            try {
+                Response response = client.newCall(request).execute();
+                logger.info("isSuccessful = " +  response.isSuccessful() +", 收到消息" + JSON.toJSONString(response)+ "== message " + response.message());
+                if (response.isSuccessful() && "Ok".equalsIgnoreCase(response.message())) {
+                    logger.info("执行成功  返回结果为 response =" +  JSON.toJSONString(response) +", message =" + response.message());
+                } else {
+                    logger.error(" .... 接口 调用出错.... " + bodyStr + ", response = " + JSON.toJSONString(response));
+                    throw  new RuntimeException("call inf fail ");
+                }
+                response.close();
+            } catch (IOException e) {
+                logger.error("outPutData 执行出错.... " + bodyStr, e);
+            }
+        }
+    }
+
+
     public static void main(String[] args) throws ParseException {
 //        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 //        Date date = dateFormat.parse("2020-01-12-16-11-10");

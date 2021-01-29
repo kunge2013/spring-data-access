@@ -33,4 +33,10 @@ public interface UploadService {
      * @param filename
      */
     public void callHttp(String filename);
+
+    /**
+     * 支持扩展
+     * @param filename
+     */
+    public void callHttpExt(String filename);
 }
