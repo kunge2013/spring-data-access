@@ -329,7 +329,8 @@ public class UploadServiceImpl implements UploadService {
 
             CheckResult checkResult = checkUpDataMap(upData);
             if (checkResult != CheckResult.SUCCESS) {
-                JOptionPane.showMessageDialog(null, checkResult.desc, "上传数据校验", JOptionPane.ERROR_MESSAGE);
+//                JOptionPane.showMessageDialog(null, checkResult.desc, "上传数据校验", JOptionPane.ERROR_MESSAGE);
+                new Thread(() ->  JOptionPane.showMessageDialog(null, checkResult.desc, "上传数据校验", JOptionPane.ERROR_MESSAGE)).start();
                 continue;
             }
             String bodyStr = JSON.toJSONString(upData);
@@ -371,7 +372,7 @@ public class UploadServiceImpl implements UploadService {
     @Override
     public CheckResult checkUpDataMap(Map<String, Object> map) {
         if (!map.containsKey("SampleNo")
-                ||  map.get("SampleNo") != null
+                ||  map.get("SampleNo") == null
                 || ((String)map.get("SampleNo")).isEmpty()) {
             return CheckResult.SIMPLENO_EMPTY;
         }
