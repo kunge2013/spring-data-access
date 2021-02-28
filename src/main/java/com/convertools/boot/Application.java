@@ -14,6 +14,7 @@ public class Application {
     private static Log logger = LogFactory.getLog(Application.class);
 
     public static void main(String[] args) throws Exception {
+        System.setProperty("java.awt.headless", "false");
         ApplicationContext context = SpringApplication.run(Application.class, args);
         //        DataHandler handler = context.getBean(DataHandler.class);
         //        logger.info("开始执行..." + System.currentTimeMillis());

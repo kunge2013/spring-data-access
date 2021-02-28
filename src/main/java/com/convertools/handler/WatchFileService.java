@@ -74,7 +74,8 @@ public class WatchFileService implements InitializingBean, AutoCloseable {
             try {
                 if(certificate.isInvalid()) {
                     log.error("证书已过期!!!!!!!!!!!!!!");
-                    Thread.currentThread().interrupt();
+                    // 进程关闭
+                    System.exit(0);
                 }
                 WatchKey take = watchService.take();
                 for (WatchEvent<?> event : take.pollEvents()) {

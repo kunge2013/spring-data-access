@@ -1,5 +1,6 @@
 package com.convertools.handler;
 
+import com.convertools.entity.CheckResult;
 import com.convertools.entity.ParamFactValue;
 import com.convertools.entity.UpData;
 
@@ -39,4 +40,11 @@ public interface UploadService {
      * @param filename
      */
     public void callHttpExt(String filename);
+    //JOptionPane.showMessageDialog(null, "上传失败!", "", JOptionPane.ERROR_MESSAGE);
+
+    public CheckResult checkUpData(UpData upData);
+
+    public CheckResult checkUpDataMap(Map<String, Object> upData);
+
+
 }
