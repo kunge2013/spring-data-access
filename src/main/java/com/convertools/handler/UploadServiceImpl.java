@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -25,6 +26,7 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -328,10 +330,10 @@ public class UploadServiceImpl implements UploadService {
             Map upData = convertToMap(++ i ,filename, integerListMap.get(integer));
 
             CheckResult checkResult = checkUpDataMap(upData);
+            logger.info("check Result == >>> result =  " + checkResult.desc + ", data = " + upData);
             if (checkResult != CheckResult.SUCCESS) {
-//                JOptionPane.showMessageDialog(null, checkResult.desc, "上传数据校验", JOptionPane.ERROR_MESSAGE);
-                new Thread(() ->  JOptionPane.showMessageDialog(null, checkResult.desc, "上传数据校验", JOptionPane.ERROR_MESSAGE)).start();
-                continue;
+                JOptionPane.showMessageDialog(null, checkResult.desc, "上传数据校验", JOptionPane.ERROR_MESSAGE);
+                return;
             }
             String bodyStr = JSON.toJSONString(upData);
             logger.info("data === " + bodyStr);
@@ -376,9 +378,11 @@ public class UploadServiceImpl implements UploadService {
                 || ((String)map.get("SampleNo")).isEmpty()) {
             return CheckResult.SIMPLENO_EMPTY;
         }
+
+        Object encoder =   map.get("ECorder");
         if (!map.containsKey("ECorder")
-                || map.get("ECorder") == null
-                || ((String)map.get("ECorder")).isEmpty()) {
+                || encoder == null
+                || (encoder instanceof Double && ((Double) encoder <= 0 ))) {
             return CheckResult.ECORDER_EMPTY;
         }
         return CheckResult.SUCCESS;
