@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.convertools.AccessTools;
 import com.convertools.entity.Certificate;
-import com.convertools.entity.CheckResult;
 import com.convertools.entity.ParamFactValue;
 import com.convertools.entity.UpData;
 import okhttp3.*;
@@ -16,8 +15,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -26,7 +23,6 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -169,17 +165,17 @@ public class UploadServiceImpl implements UploadService {
         UpData upData = JSON.parseObject(infoStr, UpData.class);
         upData.setCode(code);
         /*试样编号生成处理*/
-//        if( upData.getSampleNo() == null || upData.getSampleNo().isEmpty()) {
-//            upData.setSampleNo("第" + simpleNo + "根");
-//        }
+        if( upData.getSampleNo() == null || upData.getSampleNo().isEmpty()) {
+            upData.setSampleNo("第" + simpleNo + "根");
+        }
 //        /*项目编号*/
 //        if (upData.getProjectNo() == null || upData.getProjectNo().isEmpty()) {
 //            upData.setProjectNo(projectNo);
 //        }
         /*委托单号*/
-//        if (upData.getECorder() == null || upData.getECorder().isEmpty()) {
-//            upData.setECorder(encoder);
-//        }
+        if (upData.getECorder() == null || upData.getECorder().isEmpty()) {
+            upData.setECorder(encoder);
+        }
         /*委托单号*/
         upData.setWorkTime(workTime);
         upData.setOperators("管理员");
@@ -233,13 +229,13 @@ public class UploadServiceImpl implements UploadService {
 
         map.put("code", "美特斯拉伸机");
         /*试样编号生成处理*/
-//        if (!map.containsKey("simpleNo") ||  map.get("simpleNo") == null) {
-//            map.put("simpleNo", "第" + simpleNo + "根");
-//        }
-//
-//        if (!map.containsKey("ECorder") || map.get("ECorder") == null) {
-//            map.put("ECorder", encoder);
-//        }
+        if (!map.containsKey("simpleNo") ||  map.get("simpleNo") == null) {
+            map.put("simpleNo", "第" + simpleNo + "根");
+        }
+
+        if (!map.containsKey("ECorder") || map.get("ECorder") == null) {
+            map.put("ECorder", encoder);
+        }
 
         map.put("WorkTime", workTime);
         map.put("operators", "管理员");
@@ -280,12 +276,6 @@ public class UploadServiceImpl implements UploadService {
         int  i = 0;
         for (Integer integer : keyList) {
             UpData upData = convertByParamFactValues(++ i ,filename, integerListMap.get(integer));
-            //check
-            CheckResult checkResult = checkUpData(upData);
-            if (checkResult != CheckResult.SUCCESS) {
-                JOptionPane.showMessageDialog(null, checkResult.desc, "上传数据校验", JOptionPane.ERROR_MESSAGE);
-                continue;
-            }
             String bodyStr = JSON.toJSONString(upData);
             logger.info("data === " + bodyStr);
             RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr);
@@ -328,13 +318,6 @@ public class UploadServiceImpl implements UploadService {
         int  i = 0;
         for (Integer integer : keyList) {
             Map upData = convertToMap(++ i ,filename, integerListMap.get(integer));
-
-            CheckResult checkResult = checkUpDataMap(upData);
-            logger.info("check Result == >>> result =  " + checkResult.desc + ", data = " + upData);
-            if (checkResult != CheckResult.SUCCESS) {
-                JOptionPane.showMessageDialog(null, checkResult.desc, "上传数据校验", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
             String bodyStr = JSON.toJSONString(upData);
             logger.info("data === " + bodyStr);
             RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr);
@@ -356,36 +339,6 @@ public class UploadServiceImpl implements UploadService {
                 logger.error("outPutData 执行出错.... " + bodyStr, e);
             }
         }
-    }
-
-
-    @Override
-    public CheckResult checkUpData(UpData upData) {
-        if (upData.getECorder() == null || upData.getECorder().isEmpty()) {
-            return CheckResult.ECORDER_EMPTY;
-        }
-        if (upData.getSampleNo() == null || upData.getSampleNo().isEmpty()) {
-            return CheckResult.ECORDER_EMPTY;
-        }
-        return CheckResult.SUCCESS;
-    }
-
-
-    @Override
-    public CheckResult checkUpDataMap(Map<String, Object> map) {
-        if (!map.containsKey("SampleNo")
-                ||  map.get("SampleNo") == null
-                || ((String)map.get("SampleNo")).isEmpty()) {
-            return CheckResult.SIMPLENO_EMPTY;
-        }
-
-        Object encoder =   map.get("ECorder");
-        if (!map.containsKey("ECorder")
-                || encoder == null
-                || (encoder instanceof Double && ((Double) encoder <= 0 ))) {
-            return CheckResult.ECORDER_EMPTY;
-        }
-        return CheckResult.SUCCESS;
     }
 
 
