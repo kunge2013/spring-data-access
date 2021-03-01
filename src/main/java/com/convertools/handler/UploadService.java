@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * @author fangkun
  * @date 2020/12/12 16:45
- * @description:
+ * @description: 上传
  */
 public interface UploadService {
 
