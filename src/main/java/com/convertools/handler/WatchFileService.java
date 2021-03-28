@@ -68,14 +68,15 @@ public class WatchFileService implements InitializingBean, AutoCloseable {
 
     @Autowired
     private Certificate certificate;
+
     private void startWatch() {
         Map<String, String> operatorMap = new HashMap<>();
         while (true) {
             try {
-                if(certificate.isInvalid()) {
-                    log.error("证书已过期!!!!!!!!!!!!!!");
-                    System.exit(0);
-                }
+//                if(certificate.isInvalid()) {
+//                    log.error("证书已过期!!!!!!!!!!!!!!");
+//                    System.exit(0);
+//                }
                 WatchKey take = watchService.take();
                 for (WatchEvent<?> event : take.pollEvents()) {
                     WatchEvent.Kind<?> kind = event.kind();

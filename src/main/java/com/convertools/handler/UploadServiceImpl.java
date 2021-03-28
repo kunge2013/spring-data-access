@@ -4,8 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.convertools.AccessTools;
 import com.convertools.entity.Certificate;
+import com.convertools.entity.CusIntIOTEntity;
 import com.convertools.entity.ParamFactValue;
 import com.convertools.entity.UpData;
+import com.convertools.repository.CusIntIOTRepository;
 import okhttp3.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -79,6 +81,9 @@ public class UploadServiceImpl implements UploadService {
     @Autowired
     private Certificate certificate;
 
+
+    @Autowired
+    private CusIntIOTRepository cusIntIOTRepository;
 
     public Map<Integer, List<ParamFactValue>> transtDataByfileName(String savefilename) {
         Map<String, Object> map = new HashMap<>();
@@ -258,6 +263,103 @@ public class UploadServiceImpl implements UploadService {
         return filterMap;
     }
 
+
+
+    public List<CusIntIOTEntity> convertToCusIntIOT(int simpleNo, String fileName, List<ParamFactValue> paramFactValues) {
+        List<CusIntIOTEntity> list = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        SimpleDateFormat workTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat encoderFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        SimpleDateFormat projectNoFormat = new SimpleDateFormat("yyyyMMddHHmm");
+        String dateStr = fileName.substring(0, 19);
+        String workTime = "";
+        String projectNo = "";
+        String encoder = "";
+        Date date = null;
+        try {
+            date = dateFormat.parse(dateStr);
+            workTime  = workTimeFormat.format(date);
+            encoder  = encoderFormat.format(date);
+            projectNo  = projectNoFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (!paramFactValues.isEmpty())  {
+            logger.info("paramFactValues data ======>>> " + JSON.toJSONString(paramFactValues));
+            logger.info("fieldMapper  ======>>> " + JSON.toJSONString(fieldMapper));
+            for (ParamFactValue paramFactValue : paramFactValues) {
+                String name = paramFactValue.getName().trim().toLowerCase();
+                logger.info("name = "  +  name  + "val = " + paramFactValue.getTheValue() + fieldMapper.containsKey(name));
+
+                if (fieldMapper.containsKey(name)) {
+                    if (paramFactValue.getUnit() != null && !paramFactValue.getUnit().isEmpty()) {
+                        try {
+                            map.put(fieldMapper.get(name), (paramFactValue.getTheValue() == null || paramFactValue.getTheValue().isEmpty()) ? 0 : Double.parseDouble(paramFactValue.getTheValue()));
+                        } catch (Exception e) {
+                            logger.error("转化解析报错 , name = " + name +"val = " + paramFactValue.getTheValue(), e);
+                            map.put(fieldMapper.get(name), paramFactValue.getTheValue());
+                        }
+                    } else {
+                        map.put(fieldMapper.get(name), paramFactValue.getTheValue());
+                    }
+
+                }
+            }
+        }
+        logger.info("map data ======>>> " + JSON.toJSONString(map));
+
+        map.put("code", "美特斯拉伸机");
+        /*试样编号生成处理*/
+        if (!map.containsKey("simpleNo") ||  map.get("simpleNo") == null) {
+            map.put("simpleNo", "第" + simpleNo + "根");
+        }
+
+        if (!map.containsKey("ECorder") || map.get("ECorder") == null) {
+            map.put("ECorder", encoder);
+        }
+
+        map.put("WorkTime", workTime);
+        map.put("operators", "管理员");
+        /*过滤掉不需要的字段*/
+        Set<String> keySet = map.keySet();
+        // 最终
+        Map<String, Object> filterMap = new HashMap<>();
+        for (String fieldKey : keySet) {
+            if (fieldupSet.contains(fieldKey.trim())) {
+                filterMap.put(fieldKey, map.get(fieldKey));
+            }
+        }
+
+        for (String key : fieldupSet) {
+            if (!filterMap.containsKey(key)) {
+                logger.info("key ====>>>" + key);
+                filterMap.put(key, 0.0);
+            }
+        }
+        String createdBy = "管理员";
+        String testBy = "管理员";
+        final String sNo = "" +  map.get("simpleNo");
+        String esort = "";
+        String evaluationResult = null;
+
+        filterMap.forEach((eitem, value) -> {
+            if (map.containsKey("ECorder")) {
+                list.add(CusIntIOTEntity.FACTORY.create(createdBy,
+                        testBy,
+                        eitem,
+                        "" + value,
+                        "" + map.get("ECorder"),
+                        sNo,
+                        esort,
+                        evaluationResult));
+            }
+        });
+
+        return list;
+    }
+
+
     public void callHttp(String filename) {
         if (certificate.isInvalid()) {
             logger.info("certificate key 已过期...");
@@ -306,8 +408,8 @@ public class UploadServiceImpl implements UploadService {
             return;
         }
 
-        OkHttpClient client = builder.build();
-        String url = host + uploadPath;
+//        OkHttpClient client = builder.build();
+//        String url = host + uploadPath;
         Map<Integer, List<ParamFactValue>> integerListMap = transtDataByfileName(filename);
         List<Integer> keyList = new ArrayList<>(integerListMap.keySet());
         keyList.sort((a,b) -> {
@@ -316,29 +418,44 @@ public class UploadServiceImpl implements UploadService {
             else return 0;
         });
         int  i = 0;
+        List<CusIntIOTEntity> dataSet = new LinkedList<>();
         for (Integer integer : keyList) {
-            Map upData = convertToMap(++ i ,filename, integerListMap.get(integer));
-            String bodyStr = JSON.toJSONString(upData);
-            logger.info("data === " + bodyStr);
-            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr);
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(body)
-                    .build();
-            try {
-                Response response = client.newCall(request).execute();
-                logger.info("isSuccessful = " +  response.isSuccessful() +", 收到消息" + JSON.toJSONString(response)+ "== message " + response.message());
-                if (response.isSuccessful() && "Ok".equalsIgnoreCase(response.message())) {
-                    logger.info("执行成功  返回结果为 response =" +  JSON.toJSONString(response) +", message =" + response.message());
-                } else {
-                    logger.error(" .... 接口 调用出错.... " + bodyStr + ", response = " + JSON.toJSONString(response));
-                    throw  new RuntimeException("call inf fail ");
-                }
-                response.close();
-            } catch (IOException e) {
-                logger.error("outPutData 执行出错.... " + bodyStr, e);
-            }
+            dataSet.addAll(convertToCusIntIOT(++i, filename, integerListMap.get(integer)));
+            //            Map upData = convertToMap(++ i ,filename, integerListMap.get(integer));
+            //            String bodyStr = JSON.toJSONString(upData);
+            //            logger.info("data === " + bodyStr);
+            //            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr);
+            //            Request request = new Request.Builder()
+            //                    .url(url)
+            //                    .post(body)
+            //                    .build();
+            //            try {
+            //                Response response = client.newCall(request).execute();
+            //                logger.info("isSuccessful = " +  response.isSuccessful() +", 收到消息" + JSON.toJSONString(response)+ "== message " + response.message());
+            //                if (response.isSuccessful() && "Ok".equalsIgnoreCase(response.message())) {
+            //                    logger.info("执行成功  返回结果为 response =" +  JSON.toJSONString(response) +", message =" + response.message());
+            //                } else {
+            //                    logger.error(" .... 接口 调用出错.... " + bodyStr + ", response = " + JSON.toJSONString(response));
+            //                    throw  new RuntimeException("call inf fail ");
+            //                }
+            //                response.close();
+            //            } catch (IOException e) {
+            //                logger.error("outPutData 执行出错.... " + bodyStr, e);
+            //            }
         }
+        List<CusIntIOTEntity> savaData = new ArrayList<>();
+        for (CusIntIOTEntity cusIntIOTEntity : dataSet) {
+                CusIntIOTEntity obj = cusIntIOTRepository
+                        .findByEitemAndSampleNoAndEcoder(cusIntIOTEntity.getEitem(), cusIntIOTEntity.getSampleNo(), cusIntIOTEntity.getEcoder());
+                if (obj != null) {
+                    obj.setValue(cusIntIOTEntity.getValue());
+                    savaData.add(obj);
+                } else {
+                    savaData.add(cusIntIOTEntity);
+                }
+        }
+        // 批量保存
+        cusIntIOTRepository.saveAll(savaData);
     }
 
 
