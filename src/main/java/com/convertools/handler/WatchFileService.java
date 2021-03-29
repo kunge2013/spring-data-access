@@ -73,10 +73,10 @@ public class WatchFileService implements InitializingBean, AutoCloseable {
         Map<String, String> operatorMap = new HashMap<>();
         while (true) {
             try {
-//                if(certificate.isInvalid()) {
-//                    log.error("证书已过期!!!!!!!!!!!!!!");
-//                    System.exit(0);
-//                }
+                if(certificate.isInvalid()) {
+                    log.error("证书已过期!!!!!!!!!!!!!!");
+                    System.exit(0);
+                }
                 WatchKey take = watchService.take();
                 for (WatchEvent<?> event : take.pollEvents()) {
                     WatchEvent.Kind<?> kind = event.kind();
@@ -113,18 +113,7 @@ public class WatchFileService implements InitializingBean, AutoCloseable {
                                 service.callHttp(fileName);
                             }
                         } catch (Exception e) {
-                            log.error( "callHttp  error retry 1{}", fileName, e);
-                            try {
-                                Thread.sleep(1000l * 30);
-                                if (useUploadExt) {
-                                    service.callHttpExt(fileName);
-                                } else {
-                                    service.callHttp(fileName);
-                                }
-
-                            } catch (Exception e1) {
-                                log.error( "callHttp  error continue ....", fileName, e1);
-                            }
+                            log.error( "callHttp  error {}", fileName, e);
                       }
                     }
                 }

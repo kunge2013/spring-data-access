@@ -100,19 +100,21 @@ public class CusIntIOTEntity implements Serializable {
     @Column(name = "FileType")
     private String fileType;
 
+    // 测试编号
+    @Transient
+    private String testNo;
+
     public static class CusIntIOTEntityFactory {
-       public CusIntIOTEntity create(String createdBy, String testBy, String eitem, String value, String ecoder, String simpleNo, String esort, String evaluationResult) {
-            Date date = new Date();
-            DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+       public CusIntIOTEntity create(String createdBy, String testBy, String eitem, String value, String ecoder, String simpleNo, String esort, String evaluationResult, String createOn, String testOn, String docNo) {
             CusIntIOTEntity cusIntIOTEntity = new CusIntIOTEntity();
-            cusIntIOTEntity.setCreatedOn(format.format(date));
-            cusIntIOTEntity.setTestOn(format.format(date));
-            cusIntIOTEntity.setCreatedOn(format.format(date));
+            cusIntIOTEntity.setCreatedOn(createOn);
+            cusIntIOTEntity.setTestOn(testOn);
             cusIntIOTEntity.setEitem(eitem);
             cusIntIOTEntity.setValue(value);
             cusIntIOTEntity.setCreatedBy(createdBy);
             cusIntIOTEntity.setTestBy(testBy);
             cusIntIOTEntity.setEcoder(ecoder);
+            cusIntIOTEntity.setDocNo(docNo);
             cusIntIOTEntity.setSampleNo(simpleNo);
             cusIntIOTEntity.setEsort(esort);
             cusIntIOTEntity.setEvaluationResult(evaluationResult);
