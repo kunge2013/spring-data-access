@@ -342,7 +342,7 @@ public class UploadServiceImpl implements UploadService {
         }
         String createdBy = "管理员";
         String testBy = "管理员";
-        String docNo = "" + map.getOrDefault("SampleNo", map.getOrDefault("simpleNo", ""));
+        String docNo = "" + map.getOrDefault("ECorder", map.getOrDefault("ECorder", ""));
         final String sNo = docNo + "-" +  map.get("simpleNo");
         String esort = "常温";
         String evaluationResult = null;
@@ -354,6 +354,7 @@ public class UploadServiceImpl implements UploadService {
                         testBy,
                         eitem,
                         "" + value,
+                        /*机器编号*/
                         "" + map.get("code"),
                         sNo,
                         esort,
