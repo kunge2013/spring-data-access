@@ -344,7 +344,7 @@ public class UploadServiceImpl implements UploadService {
         String testBy = "管理员";
         String docNo = "" + map.getOrDefault("SampleNo", map.getOrDefault("simpleNo", ""));
         final String sNo = docNo + "-" +  map.get("simpleNo");
-        String esort = "元素";
+        String esort = "常温";
         String evaluationResult = null;
         Date dateTime = new Date();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -118,6 +118,11 @@ public class CusIntIOTEntity implements Serializable {
             cusIntIOTEntity.setSampleNo(simpleNo);
             cusIntIOTEntity.setEsort(esort);
             cusIntIOTEntity.setEvaluationResult(evaluationResult);
+            /*DefaultVal*/
+            cusIntIOTEntity.setStatus(0);
+            cusIntIOTEntity.setOrg("3");
+            cusIntIOTEntity.setFileType("MR");
+           /*DefaultVal*/
             return cusIntIOTEntity;
         }
     }
