@@ -452,6 +452,7 @@ public class UploadServiceImpl implements UploadService {
             if (obj != null) {
                 obj.setValue(cusIntIOTEntity.getValue());
                 obj.setTestOn(format.format(dateTime));
+                obj.setFileType(cusIntIOTEntity.getFileType());
                 savaData.add(obj);
             } else {
                 savaData.add(cusIntIOTEntity);

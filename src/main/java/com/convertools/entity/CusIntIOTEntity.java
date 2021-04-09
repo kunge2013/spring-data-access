@@ -98,7 +98,7 @@ public class CusIntIOTEntity implements Serializable {
     private String mem;
 
     @Column(name = "FileType")
-    private String fileType;
+    private String fileType = "MNSR";
 
     // 测试编号
     @Transient
