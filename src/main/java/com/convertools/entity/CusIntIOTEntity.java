@@ -121,7 +121,7 @@ public class CusIntIOTEntity implements Serializable {
             /*DefaultVal*/
             cusIntIOTEntity.setStatus(0);
             cusIntIOTEntity.setOrg("3");
-            cusIntIOTEntity.setFileType("MR");
+            cusIntIOTEntity.setFileType("MNSR");
            /*DefaultVal*/
             return cusIntIOTEntity;
         }
