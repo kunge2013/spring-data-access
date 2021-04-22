@@ -5,26 +5,19 @@ import com.convertools.entity.Certificate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.Lifecycle;
-import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * @author fangkun
@@ -46,19 +39,13 @@ public class WatchFileService implements InitializingBean, AutoCloseable {
     @Autowired
     private UploadService service;
 
-
-    @Value("${use.uploadext}")
-    private boolean useUploadExt;
-
     private Thread watchThread;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         try {
             watchService = FileSystems.getDefault().newWatchService();
-            Paths.get(filepath).register(watchService,
-            //                    StandardWatchEventKinds.ENTRY_CREATE,
-            //                    StandardWatchEventKinds.ENTRY_DELETE,
-                    StandardWatchEventKinds.ENTRY_MODIFY);
+            Paths.get(filepath).register(watchService,  StandardWatchEventKinds.ENTRY_MODIFY);
             watchThread = new Thread(() -> startWatch());
             watchThread.start();
         } catch (IOException e) {
@@ -107,11 +94,7 @@ public class WatchFileService implements InitializingBean, AutoCloseable {
                    operatorMap.clear();
                    for (String fileName: files) {
                         try {
-                            if (useUploadExt) {
-                                service.callHttpExt(fileName);
-                            } else {
-                                service.callHttp(fileName);
-                            }
+                            service.callHttpExt(fileName);
                         } catch (Exception e) {
                             log.error( "callHttp  error {}", fileName, e);
                       }

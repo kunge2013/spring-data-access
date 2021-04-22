@@ -13,26 +13,6 @@ import java.util.Map;
  */
 public interface UploadService {
 
-    /**
-     *
-     * @param savefilename
-     * @return
-     */
-    public Map<Integer, List<ParamFactValue>> transtDataByfileName(String savefilename);
-
-    /**
-     *
-     * @param fileName
-     * @param paramFactValues
-     * @return
-     */
-    public UpData convertByParamFactValues(int simpleNo, String fileName, List<ParamFactValue> paramFactValues);
-
-    /**
-     * 单机版执行
-     * @param filename
-     */
-    public void callHttp(String filename);
 
     /**
      * 支持扩展

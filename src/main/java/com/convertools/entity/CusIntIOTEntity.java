@@ -105,7 +105,7 @@ public class CusIntIOTEntity implements Serializable {
     private String testNo;
 
     public static class CusIntIOTEntityFactory {
-       public CusIntIOTEntity create(String createdBy, String testBy, String eitem, String value, String ecoder, String simpleNo, String esort, String evaluationResult, String createOn, String testOn, String docNo) {
+       public CusIntIOTEntity create(String createdBy, String testBy, String eitem, String value, String ecoder, String simpleNo, String esort, String evaluationResult, String createOn, String testOn, String docNo, String fileType) {
             CusIntIOTEntity cusIntIOTEntity = new CusIntIOTEntity();
             cusIntIOTEntity.setCreatedOn(createOn);
             cusIntIOTEntity.setTestOn(testOn);
@@ -121,7 +121,8 @@ public class CusIntIOTEntity implements Serializable {
             /*DefaultVal*/
             cusIntIOTEntity.setStatus(0);
             cusIntIOTEntity.setOrg("3");
-            cusIntIOTEntity.setFileType("MNSR");
+            //"MNSR"
+            cusIntIOTEntity.setFileType(fileType);
            /*DefaultVal*/
             return cusIntIOTEntity;
         }

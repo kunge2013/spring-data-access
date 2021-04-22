@@ -1,15 +1,13 @@
 package com.convertools.handler;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.convertools.AccessTools;
+import com.convertools.config.Validator;
 import com.convertools.entity.Certificate;
 import com.convertools.entity.CusIntIOTEntity;
 import com.convertools.entity.ParamFactValue;
-import com.convertools.entity.UpData;
 import com.convertools.repository.CusIntIOTRepository;
 import com.convertools.utis.NumberValidationUtil;
-import com.google.common.collect.Lists;
 import okhttp3.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -79,9 +77,6 @@ public class UploadServiceImpl implements UploadService {
     @Value("${data.path.password}")
     private String password;
 
-    /*设备编号*/
-    @Value("${device.no}")
-    private String code;
 
     @Autowired
     private Certificate certificate;
@@ -89,6 +84,16 @@ public class UploadServiceImpl implements UploadService {
 
     @Autowired
     private CusIntIOTRepository cusIntIOTRepository;
+
+    @Autowired
+    private Validator validator;
+
+    /*设备编号*/
+    @Value("${device.no:SHT4605/FM06008}")
+    private String code;
+
+    @Value("${device.fileType:MNSR}")
+    private String fileType;
 
     public Map<Integer, List<ParamFactValue>> transtDataByfileName(String savefilename) {
         Map<String, Object> map = new HashMap<>();
@@ -138,133 +143,7 @@ public class UploadServiceImpl implements UploadService {
         return new HashMap<>();
     }
 
-    public UpData convertByParamFactValues(int simpleNo, String fileName, List<ParamFactValue> paramFactValues) {
-        Map<String, String> map = new HashMap<>();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        SimpleDateFormat workTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat encoderFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-        SimpleDateFormat projectNoFormat = new SimpleDateFormat("yyyyMMddHHmm");
-        String dateStr = fileName.substring(0, 19);
-        String workTime = "";
-        String projectNo = "";
-        String encoder = "";
-        Date date = null;
-        try {
-             date = dateFormat.parse(dateStr);
-             workTime  = workTimeFormat.format(date);
-             encoder  = encoderFormat.format(date);
-             projectNo  = projectNoFormat.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        if (!paramFactValues.isEmpty())  {
-            logger.info("paramFactValues data ======>>> " + JSON.toJSONString(paramFactValues));
-            logger.info("fieldMapper  ======>>> " + JSON.toJSONString(fieldMapper));
-            for (ParamFactValue paramFactValue : paramFactValues) {
-                String name = paramFactValue.getName().trim().toLowerCase();
-                logger.info("name = "  +  name  + "val = " + paramFactValue.getTheValue() + fieldMapper.containsKey(name));
-                if (fieldMapper.containsKey(name)) {
-                    map.put(fieldMapper.get(name), paramFactValue.getTheValue());
-                }
-            }
-        }
-        logger.info("map data ======>>> " + JSON.toJSONString(map));
-        String infoStr = JSON.toJSONString(map);
-        UpData upData = JSON.parseObject(infoStr, UpData.class);
-        upData.setCode(code);
-        /*试样编号生成处理*/
-        if( upData.getSampleNo() == null || upData.getSampleNo().isEmpty()) {
-            upData.setSampleNo("第" + simpleNo + "根");
-        }
-//        /*项目编号*/
-//        if (upData.getProjectNo() == null || upData.getProjectNo().isEmpty()) {
-//            upData.setProjectNo(projectNo);
-//        }
-        /*委托单号*/
-        if (upData.getECorder() == null || upData.getECorder().isEmpty()) {
-            upData.setECorder(encoder);
-        }
-        /*委托单号*/
-        upData.setWorkTime(workTime);
-        upData.setOperators("管理员");
-        /*项目编号*/
-        return upData;
-    }
 
-
-    public Map<String, Object> convertToMap(int simpleNo, String fileName, List<ParamFactValue> paramFactValues) {
-        Map<String, Object> map = new HashMap<>();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        SimpleDateFormat workTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat encoderFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-        SimpleDateFormat projectNoFormat = new SimpleDateFormat("yyyyMMddHHmm");
-        String dateStr = fileName.substring(0, 19);
-        String workTime = "";
-        String projectNo = "";
-        String encoder = "";
-        Date date = null;
-        try {
-            date = dateFormat.parse(dateStr);
-            workTime  = workTimeFormat.format(date);
-            encoder  = encoderFormat.format(date);
-            projectNo  = projectNoFormat.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        if (!paramFactValues.isEmpty())  {
-            logger.info("paramFactValues data ======>>> " + JSON.toJSONString(paramFactValues));
-            logger.info("fieldMapper  ======>>> " + JSON.toJSONString(fieldMapper));
-            for (ParamFactValue paramFactValue : paramFactValues) {
-                String name = paramFactValue.getName().trim().toLowerCase();
-                logger.info("name = "  +  name  + "val = " + paramFactValue.getTheValue() + fieldMapper.containsKey(name));
-
-                if (fieldMapper.containsKey(name)) {
-                    if (paramFactValue.getUnit() != null && !paramFactValue.getUnit().isEmpty()) {
-                        try {
-                            map.put(fieldMapper.get(name), (paramFactValue.getTheValue() == null || paramFactValue.getTheValue().isEmpty()) ? 0 : Double.parseDouble(paramFactValue.getTheValue()));
-                        } catch (Exception e) {
-                            logger.error("转化解析报错 , name = " + name +"val = " + paramFactValue.getTheValue(), e);
-                            map.put(fieldMapper.get(name), paramFactValue.getTheValue());
-                        }
-                    } else {
-                        map.put(fieldMapper.get(name), paramFactValue.getTheValue());
-                    }
-
-                }
-            }
-        }
-        logger.info("map data ======>>> " + JSON.toJSONString(map));
-
-        map.put("code", "美特斯拉伸机");
-        /*试样编号生成处理*/
-        if (!map.containsKey("simpleNo") ||  map.get("simpleNo") == null) {
-            map.put("simpleNo", "第" + simpleNo + "根");
-        }
-
-        if (!map.containsKey("ECorder") || map.get("ECorder") == null) {
-            map.put("ECorder", encoder);
-        }
-
-        map.put("WorkTime", workTime);
-        map.put("operators", "管理员");
-        /*过滤掉不需要的字段*/
-        Set<String> keySet = map.keySet();
-        // 最终
-        Map<String, Object> filterMap = new HashMap<>();
-        for (String fieldKey : keySet) {
-            if (fieldupSet.contains(fieldKey.trim())) {
-                filterMap.put(fieldKey, map.get(fieldKey));
-            }
-        }
-
-        for (String key : fieldupSet) {
-            if (!filterMap.containsKey(key)) {
-                logger.info("key ====>>>" + key);
-                filterMap.put(key, 0.0);
-            }
-        }
-        return filterMap;
-    }
 
 
 
@@ -273,18 +152,12 @@ public class UploadServiceImpl implements UploadService {
         Map<String, Object> map = new HashMap<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         SimpleDateFormat workTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat encoderFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-        SimpleDateFormat projectNoFormat = new SimpleDateFormat("yyyyMMddHHmm");
         String dateStr = fileName.substring(0, 19);
         String workTime = "";
-        String projectNo = "";
-        String encoder = "";
         Date date = null;
         try {
             date = dateFormat.parse(dateStr);
             workTime  = workTimeFormat.format(date);
-            encoder  = encoderFormat.format(date);
-            projectNo  = projectNoFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -319,7 +192,7 @@ public class UploadServiceImpl implements UploadService {
         }
 
         if (!map.containsKey("ECorder") || map.get("ECorder") == null) {
-            map.put("ECorder", encoder);
+            map.put("ECorder", "");
         }
 
         map.put("WorkTime", workTime);
@@ -355,67 +228,23 @@ public class UploadServiceImpl implements UploadService {
                         eitem,
                         "" + value,
                         /*机器编号*/
-                        "" + map.get("code"),
+                        code,
                         sNo,
                         esort,
                         evaluationResult,
                         format.format(dateTime),
                         format.format(dateTime),
-                        docNo
+                        docNo,
+                        fileType
                         ));
             }
         });
-
         return list;
-    }
-
-
-    public void callHttp(String filename) {
-        if (certificate.isInvalid()) {
-            logger.info("certificate key 已过期...");
-            return;
-        }
-
-        OkHttpClient client = builder.build();
-        String url = host + uploadPath;
-        Map<Integer, List<ParamFactValue>> integerListMap = transtDataByfileName(filename);
-        List<Integer> keyList = new ArrayList<>(integerListMap.keySet());
-        keyList.sort((a,b) -> {
-            if (a > b) return 1;
-            if (a < b) return -1;
-            else return 0;
-        });
-        int  i = 0;
-        for (Integer integer : keyList) {
-            UpData upData = convertByParamFactValues(++ i ,filename, integerListMap.get(integer));
-            String bodyStr = JSON.toJSONString(upData);
-            logger.info("data === " + bodyStr);
-            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr);
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(body)
-                    .build();
-            try {
-                Response response = client.newCall(request).execute();
-                logger.info("isSuccessful = " +  response.isSuccessful() +", 收到消息" + JSON.toJSONString(response)+ "== message " + response.message());
-                if (response.isSuccessful() && "Ok".equalsIgnoreCase(response.message())) {
-                    logger.info("执行成功  返回结果为 response =" +  JSON.toJSONString(response) +", message =" + response.message());
-                } else {
-                    logger.error(" .... 接口 调用出错.... " + bodyStr + ", response = " + JSON.toJSONString(response));
-                    throw  new RuntimeException("call inf fail ");
-                }
-                response.close();
-            } catch (IOException e) {
-                logger.error("outPutData 执行出错.... " + bodyStr, e);
-            }
-        }
     }
 
 
     @Transactional(propagation = Propagation.REQUIRED)
     public void callHttpExt(String filename) {
-        //        OkHttpClient client = builder.build();
-        //        String url = host + uploadPath;
         Map<Integer, List<ParamFactValue>> integerListMap = transtDataByfileName(filename);
         List<Integer> keyList = new ArrayList<>(integerListMap.keySet());
         keyList.sort((a,b) -> {
@@ -452,82 +281,21 @@ public class UploadServiceImpl implements UploadService {
             if (obj != null) {
                 obj.setValue(cusIntIOTEntity.getValue());
                 obj.setTestOn(format.format(dateTime));
-                obj.setFileType(cusIntIOTEntity.getFileType());
+                obj.setFileType(fileType);
                 savaData.add(obj);
             } else {
                 savaData.add(cusIntIOTEntity);
             }
         }
-        // 批量保存
-        cusIntIOTRepository.saveAll(savaData);
-        cusIntIOTRepository.flush();
+        // 校验并初始化数据信息
+        try {
+            validator.validateInputEncoder(savaData);
+            // 批量保存
+            cusIntIOTRepository.saveAll(savaData);
+            cusIntIOTRepository.flush();
+        } catch (Exception e) {
+            logger.error("validateInputEncoder error", e);
+        }
     }
 
-
-    public static void main(String[] args) throws ParseException {
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-//        Date date = dateFormat.parse("2020-01-12-16-11-10");
-//        System.out.println(date);
-        Map<String, String> map = new HashMap<>();
-        map.put("设备编号".trim().toLowerCase(),"code");
-        map.put("委托单号".trim().toLowerCase(),"ECorder");
-        map.put("试样编号".trim().toLowerCase(),"SampleNo");
-        map.put("试样直径".trim().toLowerCase(),"do");
-        map.put("断后直径".trim().toLowerCase(),"du");
-        map.put("原始标距（Lo）".trim().toLowerCase(),"lo");
-        map.put("断后标距（Lu）".trim().toLowerCase(),"lu");
-        map.put("最大力（Fm）".trim().toLowerCase(),"Fm");
-        map.put("最大力（Fm）".trim().toLowerCase(),"Fm");
-
-        map.put("规定塑性延伸力（Fp）".trim().toLowerCase(),"Fp");
-        map.put("规定塑性延伸强度（Rp）","Rp0.2");
-        map.put("规定非比例延伸强度（Rp）","Rp0.2");
-
-
-        map.put("断后伸长率（A）".trim().toLowerCase(),"A");
-        map.put("断后伸长率（A）".trim().toLowerCase(),"A");
-
-
-        map.put("断面收缩率（Z）".trim().toLowerCase(),"Z");
-        map.put("断面收缩率（Z）".trim().toLowerCase(),"Z");
-
-        map.put("抗拉强度（Rm）".trim().toLowerCase(),"RM");
-
-        map.put("下屈服力（FeL）".trim().toLowerCase(),"Fel");
-        map.put("屈服力（FeL）".trim().toLowerCase(),"Fel");
-
-        map.put("上屈服力强度（ReH）".trim().toLowerCase(),"ReH");
-        map.put("上屈服力（FeH）".trim().toLowerCase(),"FeH");
-        map.put("下屈服强度（ReL）".trim().toLowerCase(),"ReL");
-        map.put("屈服强度（ReL）".trim().toLowerCase(),"ReL");
-
-
-        map.put("规定总延伸力（Ft）".trim().toLowerCase(),"Ft");
-        map.put("规定总延伸强度（Rt）".trim().toLowerCase(),"Rt");
-        map.put("试验时间".trim().toLowerCase(),"WorkTime");
-        map.put("操作员".trim().toLowerCase(),"operators");
-        map.put("钢材品种".trim().toLowerCase(),"gcpz");
-
-
-
-        /*扩展字段*/
-        map.put("试样直径（d）".trim().toLowerCase(),"试样直径（d）");
-        map.put("断后直径（du）".trim().toLowerCase(),"断后直径（du）");
-        List<ParamFactValue> list = JSON.parseObject("[{\"littleNo\":0,\"name\":\"试样直径（d）\",\"testNo\":2482,\"theValue\":\"10\",\"unit\":\"mm\",\"userOrResultParam\":0},{\"littleNo\":1,\"name\":\"断后直径（du）\",\"testNo\":2482,\"theValue\":\"\",\"unit\":\"mm\",\"userOrResultParam\":0},{\"littleNo\":2,\"name\":\"原始标距（Lo）\",\"testNo\":2482,\"theValue\":\"50\",\"unit\":\"mm\",\"userOrResultParam\":0},{\"littleNo\":3,\"name\":\"断后标距（Lu）\",\"testNo\":2482,\"theValue\":\"\",\"unit\":\"mm\",\"userOrResultParam\":0},{\"littleNo\":4,\"name\":\"委托单号\",\"testNo\":2482,\"theValue\":\"536834\",\"unit\":\"\",\"userOrResultParam\":0},{\"littleNo\":5,\"name\":\"试样编号\",\"testNo\":2482,\"theValue\":\"002\",\"unit\":\"\",\"userOrResultParam\":0},{\"littleNo\":0,\"name\":\"屈服力（FeL）\",\"testNo\":2482,\"theValue\":\"26100.7109\",\"unit\":\"kN\",\"userOrResultParam\":1},{\"littleNo\":1,\"name\":\"屈服强度（ReL）\",\"testNo\":2482,\"theValue\":\"332.3246\",\"unit\":\"MPa\",\"userOrResultParam\":1},{\"littleNo\":2,\"name\":\"规定非比例延伸强度（Rp）\",\"testNo\":2482,\"theValue\":\"\",\"unit\":\"MPa\",\"userOrResultParam\":1},{\"littleNo\":3,\"name\":\"最大力（Fm）\",\"testNo\":2482,\"theValue\":\"38240.7813\",\"unit\":\"kN\",\"userOrResultParam\":1},{\"littleNo\":4,\"name\":\"抗拉强度（Rm）\",\"testNo\":2482,\"theValue\":\"486.8969\",\"unit\":\"MPa\",\"userOrResultParam\":1},{\"littleNo\":5,\"name\":\"断后伸长率（A）\",\"testNo\":2482,\"theValue\":\"\",\"unit\":\"％\",\"userOrResultParam\":1},{\"littleNo\":6,\"name\":\"断面收缩率（Z）\",\"testNo\":2482,\"theValue\":\"\",\"unit\":\"％\",\"userOrResultParam\":1}]\n",
-                new TypeReference<List<ParamFactValue>>(){});
-        Map<Integer, List<ParamFactValue>> listMap = list.stream().collect(Collectors.groupingBy(d -> d.getTestNo()));
-        Map<String, String > dataMap = new HashMap<>();
-        listMap.forEach((k , v) -> {
-            for (ParamFactValue paramFactValue : v) {
-                String name = paramFactValue.getName().trim().toLowerCase();
-                /*动态赋值*/
-                if (map.containsKey(name)) {
-                    dataMap.put(map.get(name), paramFactValue.getTheValue());
-                }
-            }
-            String infoStr = JSON.toJSONString(dataMap);
-            UpData upData = JSON.parseObject(infoStr, UpData.class);
-            System.out.println(JSON.toJSONString(upData));
-        });
-    }
 }
