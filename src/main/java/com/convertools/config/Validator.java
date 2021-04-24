@@ -41,7 +41,7 @@ public class Validator {
                 countDownLatch.await();
                 for (CusIntIOTEntity cusIntIOTEntity : cusIntIOTEntities) {
                     cusIntIOTEntity.setDocNo(docNoGen.getDocNo());
-                    cusIntIOTEntity.setSampleNo(String.format("%s-%s", docNoGen.getDocNo(), cusIntIOTEntity.getSampleNo()));
+                    cusIntIOTEntity.setSampleNo(String.format("%s%s", docNoGen.getDocNo(), cusIntIOTEntity.getSampleNo()));
                 }
             }
         }

@@ -185,12 +185,7 @@ public class UploadServiceImpl implements UploadService {
         }
         logger.info("map data ======>>> " + JSON.toJSONString(map));
 
-        map.put("code", "SHT4605/FM06008");
         /*试样编号生成处理*/
-        if (!map.containsKey("simpleNo") ||  map.get("simpleNo") == null) {
-            map.put("simpleNo", simpleNo);
-        }
-
         if (!map.containsKey("ECorder") || map.get("ECorder") == null) {
             map.put("ECorder", "");
         }
@@ -216,7 +211,7 @@ public class UploadServiceImpl implements UploadService {
         String createdBy = "管理员";
         String testBy = "管理员";
         String docNo = "" + map.getOrDefault("ECorder", map.getOrDefault("ECorder", ""));
-        final String sNo = docNo + "-" +  map.get("simpleNo");
+        final String sNo = docNo + "-" +  simpleNo;
         String esort = "常温";
         String evaluationResult = null;
         Date dateTime = new Date();
@@ -261,6 +256,15 @@ public class UploadServiceImpl implements UploadService {
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         List<CusIntIOTEntity> savaData = new ArrayList<>();
+        if (dataSet.isEmpty()) {
+            return;
+        }
+        try {
+            // 先校验后复制
+            validator.validateInputEncoder(dataSet);
+        } catch (Exception e) {
+            logger.error("validateInputEncoder error", e);
+        }
         for (CusIntIOTEntity cusIntIOTEntity : dataSet) {
             if ("".equals(cusIntIOTEntity.getValue()) || null == cusIntIOTEntity.getValue()) {
                 cusIntIOTEntity.setValue("0");
@@ -288,16 +292,11 @@ public class UploadServiceImpl implements UploadService {
             }
         }
         // 校验并初始化数据信息
-        try {
-            // 数据不重复才进行处理
-            if (!DataCache.contains(filename, savaData)) {
-                validator.validateInputEncoder(savaData);
-                // 批量保存
-                cusIntIOTRepository.saveAll(savaData);
-                cusIntIOTRepository.flush();
-            }
-        } catch (Exception e) {
-            logger.error("validateInputEncoder error", e);
+        // 数据不重复才进行处理
+        if (!DataCache.contains(filename, savaData)) {
+            // 批量保存
+            cusIntIOTRepository.saveAll(savaData);
+            cusIntIOTRepository.flush();
         }
     }
 
