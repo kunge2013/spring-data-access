@@ -2,6 +2,7 @@ package com.convertools.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.convertools.AccessTools;
+import com.convertools.config.DataCache;
 import com.convertools.config.Validator;
 import com.convertools.entity.Certificate;
 import com.convertools.entity.CusIntIOTEntity;
@@ -19,7 +20,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -289,10 +289,13 @@ public class UploadServiceImpl implements UploadService {
         }
         // 校验并初始化数据信息
         try {
-            validator.validateInputEncoder(savaData);
-            // 批量保存
-            cusIntIOTRepository.saveAll(savaData);
-            cusIntIOTRepository.flush();
+            // 数据不重复才进行处理
+            if (!DataCache.contains(filename, savaData)) {
+                validator.validateInputEncoder(savaData);
+                // 批量保存
+                cusIntIOTRepository.saveAll(savaData);
+                cusIntIOTRepository.flush();
+            }
         } catch (Exception e) {
             logger.error("validateInputEncoder error", e);
         }

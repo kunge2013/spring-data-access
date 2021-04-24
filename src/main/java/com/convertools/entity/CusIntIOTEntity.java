@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * @author fangkun
@@ -99,6 +100,20 @@ public class CusIntIOTEntity implements Serializable {
 
     @Column(name = "FileType")
     private String fileType = "MNSR";
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CusIntIOTEntity that = (CusIntIOTEntity) o;
+        return Objects.equals(eitem, that.eitem) &&
+                Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(eitem, value);
+    }
 
     // 测试编号
     @Transient
