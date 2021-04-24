@@ -19,7 +19,7 @@ public class DataPostHandler {
     @Autowired
     ApplicationContext context;
 
-    @Value("${exec:false}")
+    @Value("${post.switch:false}")
     private boolean execPostApi;
 
     void handler(String fileName) {
