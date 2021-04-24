@@ -2,29 +2,23 @@ package com.convertools.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.convertools.AccessTools;
-import com.convertools.config.Validator;
 import com.convertools.entity.Certificate;
-import com.convertools.entity.CusIntIOTEntity;
 import com.convertools.entity.ParamFactValue;
-import com.convertools.repository.CusIntIOTRepository;
-import com.convertools.utis.NumberValidationUtil;
+import com.convertools.entity.UpData;
 import okhttp3.*;
+import okhttp3.OkHttpClient.Builder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -32,15 +26,14 @@ import java.util.stream.Collectors;
 
 /**
  * @author fangkun
- * @date 2020/12/12 16:45
+ * @date 2021/4/24 20:24
  * @description:
  */
-@Service("uploadServiceImpl")
-public class UploadServiceImpl implements UploadService {
+@Service("postApi")
+public class PostApi implements UploadService {
 
     @Value("${result.fieldupset}")
     private List<String> fieldupSet;
-
 
     private static Log logger = LogFactory.getLog(UploadServiceImpl.class);
 
@@ -48,7 +41,7 @@ public class UploadServiceImpl implements UploadService {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private OkHttpClient.Builder builder;
+    private Builder builder;
 
     /*缓存记录路径*/
     @Value("${temp.file.path}")
@@ -77,29 +70,19 @@ public class UploadServiceImpl implements UploadService {
     @Value("${data.path.password}")
     private String password;
 
+    /*设备编号*/
+    @Value("${device.no:SHT4605/FM06008}")
+    private String code;
 
     @Autowired
     private Certificate certificate;
 
 
-    @Autowired
-    private CusIntIOTRepository cusIntIOTRepository;
-
-    @Autowired
-    private Validator validator;
-
-    /*设备编号*/
-    @Value("${device.no:SHT4605/FM06008}")
-    private String code;
-
-    @Value("${device.fileType:MNSR}")
-    private String fileType;
-
     public Map<Integer, List<ParamFactValue>> transtDataByfileName(String savefilename) {
         Map<String, Object> map = new HashMap<>();
         String filePath = dataPathDir +  savefilename;
         AccessTools tools = new AccessTools();
-        Connection connection = null;
+        java.sql.Connection connection = null;
         Statement statement = null;
         try {
             connection = tools.getConnection(filePath, user, password);
@@ -145,19 +128,76 @@ public class UploadServiceImpl implements UploadService {
 
 
 
-
-
-    public List<CusIntIOTEntity> convertToCusIntIOT(int simpleNo, String fileName, List<ParamFactValue> paramFactValues) {
-        List<CusIntIOTEntity> list = new ArrayList<>();
-        Map<String, Object> map = new HashMap<>();
+    public UpData convertByParamFactValues(int simpleNo, String fileName, List<ParamFactValue> paramFactValues) {
+        Map<String, String> map = new HashMap<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         SimpleDateFormat workTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat encoderFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        SimpleDateFormat projectNoFormat = new SimpleDateFormat("yyyyMMddHHmm");
         String dateStr = fileName.substring(0, 19);
         String workTime = "";
+        String projectNo = "";
+        String encoder = "";
         Date date = null;
         try {
             date = dateFormat.parse(dateStr);
             workTime  = workTimeFormat.format(date);
+            encoder  = encoderFormat.format(date);
+            projectNo  = projectNoFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (!paramFactValues.isEmpty())  {
+            logger.info("paramFactValues data ======>>> " + JSON.toJSONString(paramFactValues));
+            logger.info("fieldMapper  ======>>> " + JSON.toJSONString(fieldMapper));
+            for (ParamFactValue paramFactValue : paramFactValues) {
+                String name = paramFactValue.getName().trim().toLowerCase();
+                logger.info("name = "  +  name  + "val = " + paramFactValue.getTheValue() + fieldMapper.containsKey(name));
+                if (fieldMapper.containsKey(name)) {
+                    map.put(fieldMapper.get(name), paramFactValue.getTheValue());
+                }
+            }
+        }
+        logger.info("map data ======>>> " + JSON.toJSONString(map));
+        String infoStr = JSON.toJSONString(map);
+        UpData upData = JSON.parseObject(infoStr, UpData.class);
+        upData.setCode(code);
+        /*试样编号生成处理*/
+        if( upData.getSampleNo() == null || upData.getSampleNo().isEmpty()) {
+            upData.setSampleNo("第" + simpleNo + "根");
+        }
+//        /*项目编号*/
+//        if (upData.getProjectNo() == null || upData.getProjectNo().isEmpty()) {
+//            upData.setProjectNo(projectNo);
+//        }
+        /*委托单号*/
+        if (upData.getECorder() == null || upData.getECorder().isEmpty()) {
+            upData.setECorder(encoder);
+        }
+        /*委托单号*/
+        upData.setWorkTime(workTime);
+        upData.setOperators("管理员");
+        /*项目编号*/
+        return upData;
+    }
+
+
+    public Map<String, Object> convertToMap(int simpleNo, String fileName, List<ParamFactValue> paramFactValues) {
+        Map<String, Object> map = new HashMap<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        SimpleDateFormat workTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat encoderFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        SimpleDateFormat projectNoFormat = new SimpleDateFormat("yyyyMMddHHmm");
+        String dateStr = fileName.substring(0, 19);
+        String workTime = "";
+        String projectNo = "";
+        String encoder = "";
+        Date date = null;
+        try {
+            date = dateFormat.parse(dateStr);
+            workTime  = workTimeFormat.format(date);
+            encoder  = encoderFormat.format(date);
+            projectNo  = projectNoFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -185,14 +225,14 @@ public class UploadServiceImpl implements UploadService {
         }
         logger.info("map data ======>>> " + JSON.toJSONString(map));
 
-        map.put("code", "SHT4605/FM06008");
+        map.put("code", code);
         /*试样编号生成处理*/
         if (!map.containsKey("simpleNo") ||  map.get("simpleNo") == null) {
-            map.put("simpleNo", simpleNo);
+            map.put("simpleNo", "第" + simpleNo + "根");
         }
 
         if (!map.containsKey("ECorder") || map.get("ECorder") == null) {
-            map.put("ECorder", "");
+            map.put("ECorder", encoder);
         }
 
         map.put("WorkTime", workTime);
@@ -213,38 +253,17 @@ public class UploadServiceImpl implements UploadService {
                 filterMap.put(key, 0.0);
             }
         }
-        String createdBy = "管理员";
-        String testBy = "管理员";
-        String docNo = "" + map.getOrDefault("ECorder", map.getOrDefault("ECorder", ""));
-        final String sNo = docNo + "-" +  map.get("simpleNo");
-        String esort = "常温";
-        String evaluationResult = null;
-        Date dateTime = new Date();
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        filterMap.forEach((eitem, value) -> {
-            if (map.containsKey("ECorder")) {
-                list.add(CusIntIOTEntity.FACTORY.create(createdBy,
-                        testBy,
-                        eitem,
-                        "" + value,
-                        /*机器编号*/
-                        code,
-                        sNo,
-                        esort,
-                        evaluationResult,
-                        format.format(dateTime),
-                        format.format(dateTime),
-                        docNo,
-                        fileType
-                        ));
-            }
-        });
-        return list;
+        return filterMap;
     }
 
-
-    @Transactional(propagation = Propagation.REQUIRED)
     public void callHttpExt(String filename) {
+        if (certificate.isInvalid()) {
+            logger.info("certificate key 已过期...");
+            return;
+        }
+
+        OkHttpClient client = builder.build();
+        String url = host + uploadPath;
         Map<Integer, List<ParamFactValue>> integerListMap = transtDataByfileName(filename);
         List<Integer> keyList = new ArrayList<>(integerListMap.keySet());
         keyList.sort((a,b) -> {
@@ -253,48 +272,28 @@ public class UploadServiceImpl implements UploadService {
             else return 0;
         });
         int  i = 0;
-        List<CusIntIOTEntity> dataSet = new LinkedList<>();
         for (Integer integer : keyList) {
-            dataSet.addAll(convertToCusIntIOT(++i, filename, integerListMap.get(integer)));
-        }
-        Date dateTime = new Date();
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-        List<CusIntIOTEntity> savaData = new ArrayList<>();
-        for (CusIntIOTEntity cusIntIOTEntity : dataSet) {
-            if ("".equals(cusIntIOTEntity.getValue()) || null == cusIntIOTEntity.getValue()) {
-                cusIntIOTEntity.setValue("0");
+            Map upData = convertToMap(++ i ,filename, integerListMap.get(integer));
+            String bodyStr = JSON.toJSONString(upData);
+            logger.info("data === " + bodyStr);
+            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr);
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(body)
+                    .build();
+            try {
+                Response response = client.newCall(request).execute();
+                logger.info("isSuccessful = " +  response.isSuccessful() +", 收到消息" + JSON.toJSONString(response)+ "== message " + response.message());
+                if (response.isSuccessful() && "Ok".equalsIgnoreCase(response.message())) {
+                    logger.info("执行成功  返回结果为 response =" +  JSON.toJSONString(response) +", message =" + response.message());
+                } else {
+                    logger.error(" .... 接口 调用出错.... " + bodyStr + ", response = " + JSON.toJSONString(response));
+                    throw  new RuntimeException("call inf fail ");
+                }
+                response.close();
+            } catch (IOException e) {
+                logger.error("outPutData 执行出错.... " + bodyStr, e);
             }
-            if (!NumberValidationUtil.isNum(cusIntIOTEntity.getValue())) {
-                continue;
-            }
-            // 不必要的属性过滤掉
-            if("SampleNo".equalsIgnoreCase(cusIntIOTEntity.getEitem())
-                    || "ECorder".equalsIgnoreCase(cusIntIOTEntity.getEitem())) {
-                continue;
-            }
-
-            CusIntIOTEntity obj = cusIntIOTRepository.findByEitemAndSampleNoAndEcoder(
-                    cusIntIOTEntity.getEitem(),
-                    cusIntIOTEntity.getSampleNo(),
-                    cusIntIOTEntity.getEcoder());
-            if (obj != null) {
-                obj.setValue(cusIntIOTEntity.getValue());
-                obj.setTestOn(format.format(dateTime));
-                obj.setFileType(fileType);
-                savaData.add(obj);
-            } else {
-                savaData.add(cusIntIOTEntity);
-            }
-        }
-        // 校验并初始化数据信息
-        try {
-            validator.validateInputEncoder(savaData);
-            // 批量保存
-            cusIntIOTRepository.saveAll(savaData);
-            cusIntIOTRepository.flush();
-        } catch (Exception e) {
-            logger.error("validateInputEncoder error", e);
         }
     }
 

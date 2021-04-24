@@ -30,14 +30,13 @@ public class WatchFileService implements InitializingBean, AutoCloseable {
 
     private static Log logger = LogFactory.getLog(WatchFileService.class);
 
-    ApplicationContext context;
     private WatchService watchService;
 
     @Value("${data.path}")
     private String filepath;
 
     @Autowired
-    private UploadService service;
+    private DataPostHandler postHandler;
 
     private Thread watchThread;
 
@@ -94,9 +93,9 @@ public class WatchFileService implements InitializingBean, AutoCloseable {
                    operatorMap.clear();
                    for (String fileName: files) {
                         try {
-                            service.callHttpExt(fileName);
+                            postHandler.handler(fileName);
                         } catch (Exception e) {
-                            log.error( "callHttp  error {}", fileName, e);
+                            log.error( "callHttpExt  error {}", fileName, e);
                       }
                     }
                 }
