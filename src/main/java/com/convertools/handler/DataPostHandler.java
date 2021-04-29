@@ -23,19 +23,17 @@ public class DataPostHandler {
     @Autowired
     ApplicationContext context;
 
-    @Value("${post.switch:false}")
-    private boolean execPostApi;
+    @Value("${data.exec.type:2}")
+    private int serviceType;
 
 
     void handler(String fileName) {
+        Set<String> services = HandlerEnum.parse(serviceType);
         Map<String, UploadService> beansOfType = context.getBeansOfType(UploadService.class);
         Set<Map.Entry<String, UploadService>> entries = beansOfType.entrySet();
         for (Map.Entry<String, UploadService> entry : entries) {
             String key = entry.getKey();
-            if ("uploadServiceImpl".equalsIgnoreCase(key)) {
-                entry.getValue().callHttpExt(fileName);
-            }
-            if (!"uploadServiceImpl".equalsIgnoreCase(key) && execPostApi) {
+            if (services.contains(key)) {
                 entry.getValue().callHttpExt(fileName);
             }
         }
