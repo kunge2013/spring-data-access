@@ -1,14 +1,20 @@
 package com.convertools.handler;
 
-import com.convertools.config.DataCache;
+import com.convertools.entity.MtsUploadRecord;
+import com.convertools.repository.MtsUploadRecordRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static com.convertools.entity.MtsUploadRecord.UPLOAD_READY;
 
 /**
  * @author fangkun
@@ -25,6 +31,8 @@ public class DataPostHandler {
     @Value("${data.exec.type:2}")
     private int serviceType;
 
+    @Autowired
+    private MtsUploadRecordRepository mtsUploadRecordRepository;
 
     void handler(String fileName) {
         Set<String> services = HandlerEnum.parse(serviceType);
@@ -39,23 +47,23 @@ public class DataPostHandler {
     }
 
 
-    // 定时删除缓存数据
-    // @Scheduled(cron="0 */5 * * * ?")
-    public void timeRemove() {
+    // 每天12 点定时上报  错误数据
+    @Scheduled(cron="0 0 12 * * ?")
+    public void retryUploadFailData() {
         try {
             Long currentTime = System.currentTimeMillis();
-            for (Map.Entry<String, Long> stringLongEntry : DataCache.dataMapTimeStamp.entrySet()) {
-                Long startTime = stringLongEntry.getValue();
-                String fileName = stringLongEntry.getKey();
-                Long difTime = currentTime - startTime;
-                // 10 分钟删除一次
-                if (difTime >= 1000 * 60 * 10) {
-                    DataCache.dataMapTimeStamp.remove(fileName);
-                    DataCache.dataMap.remove(fileName);
+            List<MtsUploadRecord> uploadFailedRecords = mtsUploadRecordRepository.findByUploadStatus(UPLOAD_READY);
+            if (!CollectionUtils.isEmpty(uploadFailedRecords)) {
+                for (MtsUploadRecord uploadFailedRecord : uploadFailedRecords) {
+                   try {
+                       handler(uploadFailedRecord.getFileName());
+                   } catch (Exception e) {
+                     log.error("upload fail", e);
+                   }
                 }
             }
         } catch (Exception e) {
-            log.error("删除任务失败!", e);
+            log.error("重试上报!", e);
         }
     }
 }
