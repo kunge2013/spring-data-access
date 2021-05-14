@@ -30,7 +30,7 @@ public class DemoApplicationTests {
     @Test
     public void testSave() {
         CusIntIOTEntity cusIntIOTEntity = new CusIntIOTEntity();
-        cusIntIOTEntity.setEcoder("XXX");
+        cusIntIOTEntity.setEcorder("XXX");
         cusIntIOTEntity.setDocNo("doc001");
         cusIntIOTEntity.setCreatedOn("2021-03-10 00:01:00");
         cusIntIOTEntity.setTestOn("2021-03-10 00:01:00");
@@ -44,9 +44,9 @@ public class DemoApplicationTests {
     public void testfindByeitemAndsamppleNoAndecoder() {
         CusIntIOTEntity cusIntIOTEntity = new CusIntIOTEntity();
         cusIntIOTEntity.setSampleNo("159753-1");
-        cusIntIOTEntity.setEcoder("美特斯摆锤机");
+        cusIntIOTEntity.setEcorder("美特斯摆锤机");
         cusIntIOTEntity.setEitem("平均冲击功(J)");
-        CusIntIOTEntity byeitemAndsamppleNoAndecoder = cusIntIOTRepository.findByEitemAndSampleNoAndEcoder(cusIntIOTEntity.getEitem(), cusIntIOTEntity.getSampleNo(), cusIntIOTEntity.getEcoder());
+        CusIntIOTEntity byeitemAndsamppleNoAndecoder = cusIntIOTRepository.findByEitemAndSampleNoAndEcorder(cusIntIOTEntity.getEitem(), cusIntIOTEntity.getSampleNo(), cusIntIOTEntity.getEcorder());
         System.out.println(byeitemAndsamppleNoAndecoder);
     }
 }

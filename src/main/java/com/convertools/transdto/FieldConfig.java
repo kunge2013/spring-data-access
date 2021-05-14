@@ -128,6 +128,21 @@ public class FieldConfig {
             map.put("操作员".trim().toLowerCase(),"operators");
             map.put("钢材品种".trim().toLowerCase(),"gcpz");
         }
+
+        {
+            //            平行长度（Lc）
+            map.put("平行长度（Lc）".trim().toLowerCase(), "Lc");
+            //            引伸计标距（Le）
+            map.put("引伸计标距（Le）".trim().toLowerCase(), "Le");
+            //            规定塑性延伸率（ep）
+            map.put("规定塑性延伸率（ep）".trim().toLowerCase(), "ep");
+            //            规定总延伸率（et）
+            map.put("规定总延伸率（et）".trim().toLowerCase(), "et");
+            //            试样面积（So）
+            map.put("试样面积（So）".trim().toLowerCase(), "So");
+            //弹性模量（E）
+            map.put("弹性模量（E）".trim().toLowerCase(), "E");
+        }
         return map;
     }
 

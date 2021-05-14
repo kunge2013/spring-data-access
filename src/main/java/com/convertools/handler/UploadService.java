@@ -1,10 +1,5 @@
 package com.convertools.handler;
 
-import com.convertools.entity.ParamFactValue;
-import com.convertools.entity.UpData;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author fangkun
@@ -18,5 +13,5 @@ public interface UploadService {
      * 支持扩展
      * @param filename
      */
-    public void callHttpExt(String filename);
+    public void execData(String filename);
 }

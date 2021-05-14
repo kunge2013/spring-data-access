@@ -46,7 +46,7 @@ public class CusIntIOTEntity implements Serializable {
     private String docNo;
 
     @Column(name = "Ecorder")
-    private String ecoder;
+    private String ecorder;
 
     @Column(name = "SampleNo")
     private String sampleNo;
@@ -120,7 +120,7 @@ public class CusIntIOTEntity implements Serializable {
     private String testNo;
 
     public static class CusIntIOTEntityFactory {
-       public CusIntIOTEntity create(String createdBy, String testBy, String eitem, String value, String ecoder, String simpleNo, String esort, String evaluationResult, String createOn, String testOn, String docNo, String fileType) {
+       public CusIntIOTEntity create(String createdBy, String testBy, String eitem, String value, String ecorder, String simpleNo, String esort, String evaluationResult, String createOn, String testOn, String docNo, String fileType) {
             CusIntIOTEntity cusIntIOTEntity = new CusIntIOTEntity();
             cusIntIOTEntity.setCreatedOn(createOn);
             cusIntIOTEntity.setTestOn(testOn);
@@ -128,7 +128,7 @@ public class CusIntIOTEntity implements Serializable {
             cusIntIOTEntity.setValue(value);
             cusIntIOTEntity.setCreatedBy(createdBy);
             cusIntIOTEntity.setTestBy(testBy);
-            cusIntIOTEntity.setEcoder(ecoder);
+            cusIntIOTEntity.setEcorder(ecorder);
             cusIntIOTEntity.setDocNo(docNo);
             cusIntIOTEntity.setSampleNo(simpleNo);
             cusIntIOTEntity.setEsort(esort);

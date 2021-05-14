@@ -10,7 +10,7 @@ import java.util.Set;
  */
 public enum HandlerEnum {
     APIPOST(1, "postApi"),
-    DBSAVE(2, "uploadServiceImpl");
+    DBSAVE(2, "sqlServerHandler");
     int type;
     String service;
 

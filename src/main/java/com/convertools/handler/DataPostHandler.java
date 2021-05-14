@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -34,14 +33,14 @@ public class DataPostHandler {
         for (Map.Entry<String, UploadService> entry : entries) {
             String key = entry.getKey();
             if (services.contains(key)) {
-                entry.getValue().callHttpExt(fileName);
+                entry.getValue().execData(fileName);
             }
         }
     }
 
 
     // 定时删除缓存数据
-    @Scheduled(cron="0 */5 * * * ?")
+    // @Scheduled(cron="0 */5 * * * ?")
     public void timeRemove() {
         try {
             Long currentTime = System.currentTimeMillis();

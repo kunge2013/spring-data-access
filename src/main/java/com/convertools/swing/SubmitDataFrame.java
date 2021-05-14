@@ -21,9 +21,17 @@ public class SubmitDataFrame extends JFrame implements ActionListener {
     JButton saveButton;
     JTextField jTextField;
 
-    int width = 800;
-    int height = 640;
 
+
+    static int width = 800;
+    static  int height = 640;
+
+    // 全屏
+    static {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        height = screenSize.height * 80/100;
+        width = screenSize.width* 80/100;
+    }
     private DocNoGen docNoGen;
 
     private CountDownLatch countDownLatch;

@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CusIntIOTRepository extends JpaRepository<CusIntIOTEntity, Long> {
 
-    CusIntIOTEntity findByEitemAndSampleNoAndEcoder(String eitem, String sampleNo, String ecoder);
+    CusIntIOTEntity findByEitemAndSampleNoAndEcorder(String eitem, String sampleNo, String ecoder);
+
+    CusIntIOTEntity findByEitemAndDocNoAndEcorder(String eitem, String docNo, String ecorder);
 
 }

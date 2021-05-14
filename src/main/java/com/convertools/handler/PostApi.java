@@ -256,7 +256,7 @@ public class PostApi implements UploadService {
         return filterMap;
     }
 
-    public void callHttpExt(String filename) {
+    public void execData(String filename) {
         if (certificate.isInvalid()) {
             logger.info("certificate key 已过期...");
             return;

@@ -15,7 +15,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +34,7 @@ import java.util.stream.Collectors;
  * @date 2020/12/12 16:45
  * @description:
  */
-@Service("uploadServiceImpl")
+// @Service("uploadServiceImpl")
 public class UploadServiceImpl implements UploadService {
 
     @Value("${result.fieldupset}")
@@ -239,7 +238,7 @@ public class UploadServiceImpl implements UploadService {
 
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void callHttpExt(String filename) {
+    public void execData(String filename) {
         Map<Integer, List<ParamFactValue>> integerListMap = transtDataByfileName(filename);
         List<Integer> keyList = new ArrayList<>(integerListMap.keySet());
         keyList.sort((a,b) -> {
@@ -278,10 +277,10 @@ public class UploadServiceImpl implements UploadService {
                 continue;
             }
 
-            CusIntIOTEntity obj = cusIntIOTRepository.findByEitemAndSampleNoAndEcoder(
+            CusIntIOTEntity obj = cusIntIOTRepository.findByEitemAndSampleNoAndEcorder(
                     cusIntIOTEntity.getEitem(),
                     cusIntIOTEntity.getSampleNo(),
-                    cusIntIOTEntity.getEcoder());
+                    cusIntIOTEntity.getEcorder());
             if (obj != null) {
                 obj.setValue(cusIntIOTEntity.getValue());
                 obj.setTestOn(format.format(dateTime));
