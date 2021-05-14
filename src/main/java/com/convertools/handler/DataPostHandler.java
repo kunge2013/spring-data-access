@@ -76,7 +76,7 @@ public class DataPostHandler {
         } catch (Exception e) {
             log.error("重试上报!", e);
         } finally {
-            log.info("定时任务重传执行完毕!耗时" +  (System.currentTimeMillis() - startTime) / 1000 + "s");
+            log.info("定时任务重传执行完毕!耗时" +  (System.currentTimeMillis() - startTime) / 1000l + "s");
         }
     }
 }
