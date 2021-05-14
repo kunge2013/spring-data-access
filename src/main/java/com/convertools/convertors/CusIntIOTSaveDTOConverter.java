@@ -60,11 +60,15 @@ public class CusIntIOTSaveDTOConverter implements IConverter<String, List<CusInt
     @Value("${device.esort:常温}")
     private String esort;
 
+    @Value("${use.current.desc:false}")
+    private Boolean useCurrentDesc;
+
     @Resource(name = "fieldMapper")
     private HashMap<String, String> fieldMapper;
 
     @Autowired
     private MtsUploadRecordRepository mtsUploadRecordRepository;
+
 
     @Autowired
     private IUpdateMdbDocNo updateMdbDocNo;
@@ -180,7 +184,7 @@ public class CusIntIOTSaveDTOConverter implements IConverter<String, List<CusInt
                                     CusIntIOTEntity.FACTORY.create(createdBy,
                                             testBy,
                                             /*eitem,*/
-                                            fieldMapper.getOrDefault(eitem.toLowerCase(), eitem),
+                                            useCurrentDesc ? eitem : fieldMapper.getOrDefault(eitem.toLowerCase(), eitem),
                                             value,
                                             /*机器编号*/
                                             code,
