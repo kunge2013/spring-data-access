@@ -158,7 +158,7 @@ public class CusIntIOTSaveDTOConverter implements IConverter<String, List<CusInt
                     cusIntIOTSaveDTO.setSimpleNo(simpleNo);
                     String createdBy = "管理员";
                     String testBy = "管理员";
-                    String sNo = simpleNo;
+                    String sNo = fetchPOSimpleNo(dataSet);
                     //String esort = "常温";
                     String evaluationResult = "";
                     Date dateTime = new Date();
@@ -222,6 +222,13 @@ public class CusIntIOTSaveDTOConverter implements IConverter<String, List<CusInt
     }
 
 
+    private String fetchPOSimpleNo(List<ParamFactValue> resultSet) {
+        Map<String, String> map = resultSet.stream().collect(Collectors.toMap(obj -> obj.getName(), obj -> obj.getTheValue()));
+        if (map.containsKey("试样编号")) {
+           return map.get("试样编号");
+        }
+        return "";
+    }
     /**
      * 获取委托单号
      * @param paramFactValueList
