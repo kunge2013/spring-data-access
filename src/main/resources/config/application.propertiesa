@@ -1,0 +1,35 @@
+#datasource setting
+# 数据库驱动
+spring.datasource.driver-class-name=net.ucanaccess.jdbc.UcanaccessDriver
+# 数据库 文件
+spring.datasource.url=jdbc:ucanaccess://D:\\Program Files (x86)\\PowerTestV3.5-SHT\\Network\\TransDataDB.mdb
+#数据库密码
+spring.datasource.username=
+#数据库用户
+spring.datasource.password=
+# Hikari 数据源专用配置
+spring.datasource.hikari.maximum-pool-size=20
+spring.datasource.hikari.minimum-idle=5
+#存储处理最大偏移量
+temp.file.path=D://test//temp.ini
+#初始化是否上传之前的所有数据  true 上传所有 false 不传
+upload.initall=true
+#上报接口地址
+upload.host=http://192.168.160.72:49993
+#上报接口路径
+upload.uploadPath=/api/v1/code
+# 计算参数文件路径
+data.path.dir=jdbc:ucanaccess://D:\\Program Files (x86)\\PowerTestV3.5-SHT\\data\\
+#记录数据库地址
+data.path=D:\\Program Files (x86)\\PowerTestV3.5-SHT\\data\\
+# 计算参数文件数据库用户
+data.path.user=
+# 计算参数文件数据库密码
+data.path.password=
+# 设备编号
+device.no=美特斯拉伸机
+# 需要上报的有效字段
+result.fieldmap=eyLop4TlrprloZHmgKflu7bkvLjlvLrluqbvvIhScO+8iSI6IlJwMC4yIiwi6KeE5a6a5oC75bu25Ly45Yqb77yIZnTvvIkiOiJGdCIsIuivleagt+e8luWPtyI6IlNhbXBsZU5vIiwi6ZKi5p2Q5ZOB56eNIjoiZ2NweiIsIuaWremdouaUtue8qeeOh++8iHrvvIkiOiJaIiwi5oqX5ouJ5by65bqm77yIcm3vvIkiOiJSTSIsIuaWreWQjuagh+i3ne+8iGx177yJIjoibHUiLCLorr7lpIfnvJblj7ciOiJjb2RlIiwi6KeE5a6a5oC75bu25Ly45by65bqm77yIcnTvvIkiOiJSdCIsIuaTjeS9nOWRmCI6Im9wZXJhdG9ycyIsIuaWreWQjuS8uOmVv+eOh++8iGHvvIkiOiJBIiwi5Y6f5aeL5qCH6Led77yIbG/vvIkiOiJsbyIsIuaWreWQjuebtOW+hCI6ImR1Iiwi6K+V5qC355u05b6EIjoiZG8iLCLkuIvlsYjmnI3lipvvvIhmZWzvvIkiOiJGZWwiLCLkuIrlsYjmnI3lipvvvIhmZWjvvIkiOiJGZUgiLCLor5Xpqozml7bpl7QiOiJXb3JrVGltZSIsIuWnlOaJmOWNleWPtyI6IkVDb3JkZXIiLCLkuIrlsYjmnI3lipvlvLrluqbvvIhyZWjvvIkiOiJSZUgiLCLkuIvlsYjmnI3lvLrluqbvvIhyZWzvvIkiOiJSZUwiLCLop4TlrprloZHmgKflu7bkvLjlipvvvIhmcO+8iSI6IkZwIiwi5pyA5aSn5Yqb77yIZm3vvIkiOiJGbSJ9
+# 证书密钥
+certificate.key=2297959FC5B7CBF5C0315E02BB4BFA0D257E40F9BFE63D5B3851C07514D196F70643587DDABE64FBFD2EF3981E288AEFA4B46EDEA9A8515AC6ACD1B58A3F9074C2F7637D632ACBE937DEAEB93617D94B5004A1DDAD6526B13D366D90B1B82106
+check.cron=0 0/1 * * * ?

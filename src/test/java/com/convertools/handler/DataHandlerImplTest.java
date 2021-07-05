@@ -5,6 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.convertools.boot.Application;
 import com.convertools.entity.OutPutData;
 import com.convertools.entity.ParamFactValue;
+import com.convertools.entity.UpData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,5 +170,11 @@ public class DataHandlerImplTest {
             }
         }
 
+    }
+
+
+    @Test
+    public void test() {
+        handler.callHttp("2020-12-07-09-41-58.mdb");
     }
 }

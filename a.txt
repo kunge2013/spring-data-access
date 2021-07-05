@@ -1,0 +1,18 @@
+[{"littleNo":0,"name":"试验项目号","testNo":2710,"theValue":"","unit":"","userOrResultParam":0},
+{"littleNo":1,"name":"试验编号","testNo":2710,"theValue":"","unit":"","userOrResultParam":0},
+{"littleNo":2,"name":"试样编号","testNo":2710,"theValue":"","unit":"","userOrResultParam":0},
+{"littleNo":3,"name":"试样直径（do）","testNo":2710,"theValue":"12.6","unit":"mm","userOrResultParam":0},
+{"littleNo":4,"name":"平行长度（Lc）","testNo":2710,"theValue":"90","unit":"mm","userOrResultParam":0},
+{"littleNo":5,"name":"原始标距（Lo）","testNo":2710,"theValue":"","unit":"mm","userOrResultParam":0},
+{"littleNo":0,"name":"试样面积（So）","testNo":2710,"theValue":"124.6898","unit":"mm^2","userOrResultParam":1}
+,{"littleNo":1,"name":"规定塑性延伸力（Fp）","testNo":2710,"theValue":"","unit":"kN","userOrResultParam":1},
+{"littleNo":2,"name":"规定塑性延伸强度（Rp）","testNo":2710,"theValue":"","unit":"MPa","userOrResultParam":1},
+{"littleNo":3,"name":"上屈服力（FeH）","testNo":2710,"theValue":"41997.2813","unit":"kN","userOrResultParam":1},
+{"littleNo":4,"name":"上屈服强度（ReH）","testNo":2710,"theValue":"336.8141","unit":"MPa","userOrResultParam":1},
+{"littleNo":5,"name":"下屈服力（FeL）","testNo":2710,"theValue":"41997.2813","unit":"kN","userOrResultParam":1},
+{"littleNo":6,"name":"下屈服强度（ReL）","testNo":2710,"theValue":"336.8141","unit":"MPa","userOrResultParam":1},
+{"littleNo":7,"name":"最大力（Fm）","testNo":2710,"theValue":"74744.6719","unit":"kN","userOrResultParam":1},
+{"littleNo":8,"name":"抗拉强度（Rm）","testNo":2710,"theValue":"599.445","unit":"MPa","userOrResultParam":1},
+{"littleNo":9,"name":"断后伸长率（A）","testNo":2710,"theValue":"","unit":"％","userOrResultParam":1},
+{"littleNo":10,"name":"断面收缩率（Z）","testNo":2710,"theValue":"","unit":"％","userOrResultParam":1},
+{"littleNo":11,"name":"试验时间","testNo":2710,"theValue":"2021-01-19 16:45:34","unit":"","userOrResultParam":1}]

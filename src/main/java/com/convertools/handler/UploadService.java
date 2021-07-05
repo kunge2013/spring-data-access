@@ -8,11 +8,10 @@ import java.util.Map;
 
 /**
  * @author fangkun
- * @date 2020/11/12 10:02
- * @description:
+ * @date 2020/12/12 16:45
+ * @description: 上传
  */
-public interface DataHandler {
-    void handler();
+public interface UploadService {
 
     /**
      *
@@ -27,11 +26,17 @@ public interface DataHandler {
      * @param paramFactValues
      * @return
      */
-    public UpData convertByParamFactValues(String fileName, List<ParamFactValue> paramFactValues);
+    public UpData convertByParamFactValues(int simpleNo, String fileName, List<ParamFactValue> paramFactValues);
 
     /**
      * 单机版执行
      * @param filename
      */
     public void callHttp(String filename);
+
+    /**
+     * 支持扩展
+     * @param filename
+     */
+    public void callHttpExt(String filename);
 }

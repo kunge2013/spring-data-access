@@ -1,5 +1,6 @@
 package com.convertools;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.loader.JarLauncher;
 
 import java.sql.*;
@@ -9,6 +10,7 @@ import java.sql.*;
  * @date 2020/11/4 15:25
  * @description:
  */
+@Slf4j
 public class AccessTools {
 
     /**
@@ -52,6 +54,7 @@ public class AccessTools {
     public Connection getConnection(String url, String user, String pwd) {
         try {
             //获取Access数据库连接(Connection)
+            log.info("开始连接数据库了 === >>> url {} , user {} , pwd {} ", url, user, pwd);
             this.connection = DriverManager.getConnection(url, user, pwd);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
