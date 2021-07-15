@@ -38,7 +38,7 @@ public class SubmitDataFrame extends JFrame implements ActionListener {
     public SubmitDataFrame(DocNoGen docNoGen, CountDownLatch countDownLatch) {
         this.docNoGen = docNoGen;
         this.countDownLatch = countDownLatch;
-        this.setTitle("请输入委托单号!");
+        this.setTitle("请输入委托单号!【" + docNoGen.getMdbName() + "】");
         this.setSize(width,height);
         this.setLocationRelativeTo(null);
         // 仅仅关闭当前窗口

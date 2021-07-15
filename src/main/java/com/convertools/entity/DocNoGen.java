@@ -12,4 +12,5 @@ import lombok.Data;
 @Builder
 public class DocNoGen {
     private String docNo;
+    private String mdbName;
 }

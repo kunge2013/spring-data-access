@@ -133,7 +133,7 @@ public class CusIntIOTSaveDTOConverter implements IConverter<String, List<CusInt
                     }
                     // 都不存在 就需要弹出输入
                     if (StringUtils.isEmpty(docNo)) {
-                        DocNoGen docNoGen = DocNoGen.builder().build();
+                        DocNoGen docNoGen = DocNoGen.builder().mdbName(savefilename).build();
                         CountDownLatch countDownLatch = new CountDownLatch(1);
                         new SubmitDataFrame(docNoGen, countDownLatch);
                         countDownLatch.await();
