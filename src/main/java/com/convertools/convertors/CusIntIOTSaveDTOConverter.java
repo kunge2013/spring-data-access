@@ -11,6 +11,7 @@ import com.convertools.handler.service.IUpdateMdbDocNo;
 import com.convertools.repository.MtsUploadRecordRepository;
 import com.convertools.swing.SubmitDataFrame;
 import com.convertools.utis.NumberValidationUtil;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -137,6 +138,11 @@ public class CusIntIOTSaveDTOConverter implements IConverter<String, List<CusInt
                         CountDownLatch countDownLatch = new CountDownLatch(1);
                         new SubmitDataFrame(docNoGen, countDownLatch);
                         countDownLatch.await();
+                        // 添加忽略上报逻辑
+                        if (docNoGen.isIgnore()) {
+                            log.info("文件 + " + savefilename + " , 已经忽略上报！");
+                            return Lists.newArrayList();
+                        }
                         docNo = docNoGen.getDocNo();
                         // 更新mdb 文件委托单号
                         try {
@@ -159,6 +165,8 @@ public class CusIntIOTSaveDTOConverter implements IConverter<String, List<CusInt
                     String createdBy = "管理员";
                     String testBy = "管理员";
                     String sNo = fetchPOSimpleNo(dataSet);
+                    // 先从mdb去试样编号，如果有就用，没有就用自动生成的式样编码
+                    sNo = StringUtils.isEmpty(sNo) ? simpleNo : sNo;
                     //String esort = "常温";
                     String evaluationResult = "";
                     Date dateTime = new Date();
@@ -223,9 +231,10 @@ public class CusIntIOTSaveDTOConverter implements IConverter<String, List<CusInt
 
 
     private String fetchPOSimpleNo(List<ParamFactValue> resultSet) {
-        Map<String, String> map = resultSet.stream().collect(Collectors.toMap(obj -> obj.getName(), obj -> obj.getTheValue()));
-        if (map.containsKey("试样编号")) {
-           return map.get("试样编号");
+        List<ParamFactValue> dataSet = resultSet.stream().filter(o -> "试样编号".equalsIgnoreCase(o.getName())).collect(Collectors.toList());
+        if (!dataSet.isEmpty()) {
+            ParamFactValue docNoParamFactValue = dataSet.get(0);
+            return docNoParamFactValue.getTheValue();
         }
         return "";
     }

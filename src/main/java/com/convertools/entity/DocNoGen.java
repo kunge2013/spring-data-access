@@ -13,4 +13,6 @@ import lombok.Data;
 public class DocNoGen {
     private String docNo;
     private String mdbName;
+    private boolean ignore;
+
 }

@@ -19,6 +19,7 @@ public class SubmitDataFrame extends JFrame implements ActionListener {
     JPanel panel;
     JLabel label;
     JButton saveButton;
+    JButton ignoreButton;
     JTextField jTextField;
 
 
@@ -38,7 +39,7 @@ public class SubmitDataFrame extends JFrame implements ActionListener {
     public SubmitDataFrame(DocNoGen docNoGen, CountDownLatch countDownLatch) {
         this.docNoGen = docNoGen;
         this.countDownLatch = countDownLatch;
-        this.setTitle("请输入委托单号!【" + docNoGen.getMdbName() + "】");
+        this.setTitle("文件【" + docNoGen.getMdbName() + "】未输入委托单号,请输入委托单号");
         this.setSize(width,height);
         this.setLocationRelativeTo(null);
         // 仅仅关闭当前窗口
@@ -47,24 +48,29 @@ public class SubmitDataFrame extends JFrame implements ActionListener {
         panel = new JPanel();
         panel.setLayout(new FlowLayout());//设置为流式布局
         label = new JLabel("请输入委托单号:");
-        saveButton = new JButton("保存");
+        saveButton = new JButton("上报");
+        ignoreButton = new JButton("忽略上报");
         saveButton.addActionListener(this);//监听事件
+        ignoreButton.addActionListener(this);//监听事件
         jTextField = new JTextField(40);//设置文本框的长度
         jTextField.setPreferredSize(new Dimension(60, 40));
         jTextField.setFocusable(true);
         panel.add(label);//把组件添加到面板panel
         panel.add(jTextField);
         panel.add(saveButton);
+        panel.add(ignoreButton);
         this.setResizable(false);// 不允许最大化最小化
+        this.setUndecorated(false);
         this.add(panel);//实现面板panel
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setVisible(true);//设置可见
+        this.setMinimumSize(new Dimension(width, height));
+
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public void actionPerformed(ActionEvent e) {//处理事件
-        // TODO Auto-generated method stub
         // 保存
         if (e.getSource() == saveButton) {
             String wtdh = jTextField.getText();
@@ -77,6 +83,12 @@ public class SubmitDataFrame extends JFrame implements ActionListener {
                 this.countDownLatch.countDown();
                 this.dispose();
             }
+            // 忽略上报
+        } else if (e.getSource() == ignoreButton) {
+            docNoGen.setIgnore(true);
+            this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            this.countDownLatch.countDown();
+            this.dispose();
         }
     }
 

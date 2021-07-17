@@ -57,7 +57,7 @@ public class DataPostHandler {
 
 
     // 每天12 点定时上报  错误数据
-    @Scheduled(cron="0 0 12 * * ?")
+    //@Scheduled(cron="0 0 12 * * ?")
     public void retryUploadFailData() {
         Long startTime = System.currentTimeMillis();
         try {
