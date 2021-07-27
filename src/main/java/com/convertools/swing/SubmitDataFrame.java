@@ -47,7 +47,7 @@ public class SubmitDataFrame extends JFrame implements ActionListener {
         this.setAlwaysOnTop(true);
         panel = new JPanel();
         panel.setLayout(new FlowLayout());//设置为流式布局
-        label = new JLabel("请输入委托单号:");
+        label = new JLabel("请输入【" + docNoGen.getMdbName() +"】的委托单号:");
         saveButton = new JButton("上报");
         ignoreButton = new JButton("忽略上报");
         saveButton.addActionListener(this);//监听事件
@@ -60,7 +60,7 @@ public class SubmitDataFrame extends JFrame implements ActionListener {
         panel.add(saveButton);
         panel.add(ignoreButton);
         this.setResizable(false);// 不允许最大化最小化
-        this.setUndecorated(false);
+        this.setUndecorated(true);
         this.add(panel);//实现面板panel
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setVisible(true);//设置可见

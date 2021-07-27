@@ -61,6 +61,7 @@ public class FieldConfig {
             map.put("最大力（Fm）".trim().toLowerCase(),"Fm");
 
             map.put("规定塑性延伸力（Fp）".trim().toLowerCase(),"Fp");
+            map.put("规定非比例延伸力（Fp）".trim().toLowerCase(),"Fp");
             map.put("规定塑性延伸强度（Rp）".trim().toLowerCase(),"RP");
             map.put("规定非比例延伸强度（Rp）".trim().toLowerCase(),"RP");
 
@@ -181,6 +182,7 @@ public class FieldConfig {
             map.put("最大力（Fm）".trim().toLowerCase(),"Fm");
 
             map.put("规定塑性延伸力（Fp）".trim().toLowerCase(),"Fp");
+            map.put("规定非比例延伸力（Fp）".trim().toLowerCase(),"Fp");
             map.put("规定塑性延伸强度（Rp）".trim().toLowerCase(),"RP");
             map.put("规定非比例延伸强度（Rp）".trim().toLowerCase(),"RP");
 
