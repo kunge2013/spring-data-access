@@ -5,6 +5,7 @@ import com.convertools.AccessTools;
 import com.convertools.entity.Certificate;
 import com.convertools.entity.ParamFactValue;
 import com.convertools.entity.UpData;
+import com.convertools.transdto.FiledMapperConfig;
 import okhttp3.*;
 import okhttp3.OkHttpClient.Builder;
 import org.apache.commons.logging.Log;
@@ -53,9 +54,12 @@ public class PostApi implements UploadService {
 
     @Value("${upload.host}")
     private String host;
+//
+//    @Resource(name = "fieldMapper")
+//    private HashMap<String, String> fieldMapper;
 
-    @Resource(name = "fieldMapper")
-    private HashMap<String, String> fieldMapper;
+    @Autowired
+    FiledMapperConfig fieldMapper;
 
     @Value("${upload.uploadPath}")
     private String uploadPath = "api/v1/code";

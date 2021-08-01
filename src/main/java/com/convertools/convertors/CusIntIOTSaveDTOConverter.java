@@ -10,6 +10,7 @@ import com.convertools.entity.ParamFactValue;
 import com.convertools.handler.service.IUpdateMdbDocNo;
 import com.convertools.repository.MtsUploadRecordRepository;
 import com.convertools.swing.SubmitDataFrame;
+import com.convertools.transdto.FiledMapperConfig;
 import com.convertools.utis.NumberValidationUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -64,8 +65,11 @@ public class CusIntIOTSaveDTOConverter implements IConverter<String, List<CusInt
     @Value("${use.current.desc:false}")
     private Boolean useCurrentDesc;
 
-    @Resource(name = "fieldMapper")
-    private HashMap<String, String> fieldMapper;
+//    @Resource(name = "fieldMapper")
+//    private HashMap<String, String> fieldMapper;
+
+    @Autowired
+    private FiledMapperConfig fieldMapper;
 
     @Autowired
     private MtsUploadRecordRepository mtsUploadRecordRepository;
@@ -192,7 +196,7 @@ public class CusIntIOTSaveDTOConverter implements IConverter<String, List<CusInt
                                     CusIntIOTEntity.FACTORY.create(createdBy,
                                             testBy,
                                             /*eitem,*/
-                                            useCurrentDesc ? eitem : fieldMapper.getOrDefault(eitem.toLowerCase(), eitem),
+                                            /*useCurrentDesc ? eitem : */fieldMapper.getOrDefault(eitem.toLowerCase(), eitem),
                                             value,
                                             /*机器编号*/
                                             code,
